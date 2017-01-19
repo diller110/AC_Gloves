@@ -43,9 +43,9 @@ public void OnPluginStart() {
 	CreateMenus();
 	Format(tag, sizeof(tag), "[%s%s\x01]", clr, tag);
 	
-	ck_Glove_Type = RegClientCookie("AcGloveType7", "", CookieAccess_Private);
-	ck_Glove_Skin = RegClientCookie("AcGloveSkin7", "", CookieAccess_Private);
-	ck_Glove_Quality = RegClientCookie("AcGloveQuality7", "", CookieAccess_Private);
+	ck_Glove_Type = RegClientCookie("AcGloveType8", "", CookieAccess_Private);
+	ck_Glove_Skin = RegClientCookie("AcGloveSkin8", "", CookieAccess_Private);
+	ck_Glove_Quality = RegClientCookie("AcGloveQuality8", "", CookieAccess_Private);
 	
 	CreateTimer(2.0, LateLoading);
 	
@@ -454,7 +454,6 @@ stock void SaveGlove(int client, int model = -1, int skin = -1, int quality = -1
 }
 stock void SetGlove(int client, int model = -1, int skin = -1, int wear = -1) {
 	//PrintToServer("SetGlove %d %d %d %d", client, model, skin, wear);
-	bool clear = false;
 	if (!IsClientConnected(client) || !IsClientInGame(client) || IsFakeClient(client))
 		return;
 	if((model == -1 || skin == -1)) {
@@ -493,7 +492,7 @@ stock void SetGlove(int client, int model = -1, int skin = -1, int wear = -1) {
 	}
 	int item = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
 	SetEntPropEnt(client, Prop_Send, "m_hActiveWeapon", -1); 
-	if(!clear) {
+	if(model != -1) {
 		int ent = GivePlayerItem(client, "wearable_item");
 		if (ent != -1 && IsValidEdict(ent)) {
 			gloves[client] = ent;
@@ -615,3 +614,4 @@ stock void GetSkinName(int model, int skin, char buffer[MENU_TEXT]) {
 stock int GetSkinLimit(int model, int skin) {
 	return alModels.Get(GetSkinPos(model, skin) + 2);
 }
+// Built-in wrapper
