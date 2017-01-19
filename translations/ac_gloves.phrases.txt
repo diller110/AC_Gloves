@@ -132,4 +132,24 @@
 		"ru"	"Выбранное качество не доступно с этими перчатками."
 		"tr"	"Secilen kalite mevcut eldivenlerde uygulanamiyor."
 	}
+	"Menu_NoTeamWarning"
+	{
+		"en"	"To select gloves, you should be in T or CT team!"
+		"ru"	"Чтобы выбирать перчатки, нужно находится в команде Т или КТ!"
+	}
+	"Menu_NoTeamTitle"
+	{
+		"en"	" \n \nTo select gloves \njoin T or CT team\n 
+		"ru"	" \n \nЧтобы выбрать перчатки \nзайдите за Т или КТ\n "
+	}
+	"Menu_Title_T" 
+	{
+		"en"	"Glove selection for T:"
+		"ru"	"Выбор перчаток для Т:"
+	}
+	"Menu_Title_CT" 
+	{
+		"en"	"Glove selection for CT:"
+		"ru"	"Выбор перчаток для КТ:"
+	}
 }

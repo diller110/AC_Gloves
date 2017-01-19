@@ -4,9 +4,12 @@
 // Example icons which correctly displays in the game: ✠ ✡ ✢ ✣ ✤ ✥ ✦ ✧ ✩ ✪ ✫ ✬ ✭ ✮ ✯ ✰ ✱ ✲ ✳ ✴ ✵ ✶ ✷ ✸
 "Gloves"
 {
-	"tag"	"AC" // Plugin tag in chat ([AC] Gloves saved.)
-	"color"	"11" // Look http://ctrlv.cz/shots/2015/03/08/Mlwd.png increasingly number (1 = '01', 11 = '0B', 16 = '10')
-	"random"	"1" // 1 - enable in menu random, 0 - disable
+	"tag"	"AC"			// Plugin tag in chat ([AC] Gloves saved.)
+	"color"	"11"			// Look http://ctrlv.cz/shots/2015/03/08/Mlwd.png increasingly number (1 = '01', 11 = '0B', 16 = '10')
+	"random"	"1"			// 1 - enable in menu random, 0 - disable
+	"show_thirdperson"	"1" // 1 - show to others players, 0 - disable
+	"skip_custom_arms" "0"  // 1 - skip, if custom arms found(by other plugins), 0 - set gloves anyway
+	"team_divided"	"1"		// 1 - divided gloves choising for T and CT, 0 - choise to both
 	// Standard skins for each of the teams, restrict limit does not work
 	// Example: model" "4" - Hand Wraps
 	//           skin" "1" - Leather
