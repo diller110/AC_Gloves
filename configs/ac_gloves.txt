@@ -20,7 +20,6 @@
 		{
 			"name" "Бладхаунд"
 			"icon"	"☠" // https://unicodelookup.com/#☠
-			"model"	"models/weapons/v_models/arms/glove_bloodhound/v_glove_bloodhound.mdl"
 			"skins"
 			{
 				"10006"
@@ -49,7 +48,6 @@
 		{
 			"name" "Спортивные перчатки"
 			"icon"	"★"
-			"model" "models/weapons/v_models/arms/glove_sporty/v_glove_sporty.mdl"
 			"skins"
 			{
 				"10018"
@@ -78,7 +76,6 @@
 		{
 			"name" "Водительские перчатки"
 			"icon"	"☸"
-			"model" "models/weapons/v_models/arms/glove_slick/v_glove_slick.mdl"
 			"skins"
 			{
 				"10013"
@@ -107,7 +104,6 @@
 		{
 			"name" "Обмотки рук"
 			"icon"	"☄"
-			"model" "models/weapons/v_models/arms/glove_handwrap_leathery/v_glove_handwrap_leathery.mdl"
 			"skins"
 			{
 				"10009"
@@ -136,7 +132,6 @@
 		{
 			"name" "Мотоциклетные перчатки"
 			"icon"	"☍"
-			"model" "models/weapons/v_models/arms/glove_motorcycle/v_glove_motorcycle.mdl"
 			"skins"
 			{
 				"10024"
@@ -165,7 +160,6 @@
 		{
 			"name" "Перчатки спецназа"
 			"icon"	"✦"
-			"model" "models/weapons/v_models/arms/glove_specialist/v_glove_specialist.mdl"
 			"skins"
 			{
 				"10030"
