@@ -403,6 +403,13 @@ public int ModelMenuHandler(Menu menu, MenuAction action, int client, int item) 
 						}
 				}
 				return RedrawMenuItem(display);
+			} else {
+				int team = GetClientTeam(client);
+				else team -= 2;
+				if(StringToInt(buff) == glove_Type[client][team]) {
+					Format(display, sizeof(display), ">> %s <<", display);
+					return RedrawMenuItem(display);
+				}
 			}
 		}
 		case MenuAction_DrawItem: {
@@ -513,14 +520,24 @@ public int SkinMenuHandler(Menu menu, MenuAction action, int client, int item) {
 						title[strlen(title) - 2] = '\0';
 						Format(title, sizeof(title), "%s (VIP)\n ", title);
 					} else Format(title, sizeof(title), "%s (VIP)", title);
-					return RedrawMenuItem(title);
+					//return RedrawMenuItem(title);
 				} else if(limit > 0 && limit != 100) {
 					if (title[strlen(title) - 2] == '\n') { // Убираем пробел в последнем пункте
 						title[strlen(title) - 2] = '\0';
 						Format(title, sizeof(title), "%s (%d%%)\n ", title, limit);
 					} else Format(title, sizeof(title), "%s (%d%%)", title, limit);
-					return RedrawMenuItem(title);
+					//return RedrawMenuItem(title);
 				}
+				int team = GetClientTeam(client);
+				else team -= 2;
+				if(model == glove_Type[client][team] && skin == glove_Skin[client][team]) {
+					if (title[strlen(title) - 2] == '\n') { // Убираем пробел в последнем пункте
+						title[strlen(title) - 2] = '\0';
+						Format(title, sizeof(title), ">> %s <<\n ", title, limit);
+					} else Format(title, sizeof(title), ">>  %s <<", title, limit);
+					
+				}
+				return RedrawMenuItem(title);
 			} else {
 				switch(buff[1]){
 						case 'r':{
@@ -587,18 +604,23 @@ public int QualityMenuHandler(Menu menu, MenuAction action, int client, int item
 				switch(num) {
 					case 0: {	
 						Format(display, sizeof(display), "%T", "Menu_Quality0", client);
+						if(num==glove_Quality[client]) Format(display, sizeof(display), ">> %s <<", display);
 					}
 					case 25: {
 						Format(display, sizeof(display), "%T", "Menu_Quality25", client);
+						if(num==glove_Quality[client]) Format(display, sizeof(display), ">> %s <<", display);
 					}
 					case 50: {
 						Format(display, sizeof(display), "%T", "Menu_Quality50", client);
+						if(num==glove_Quality[client]) Format(display, sizeof(display), ">> %s <<", display);
 					}
 					case 75: {
 						Format(display, sizeof(display), "%T", "Menu_Quality75", client);
+						if(num==glove_Quality[client]) Format(display, sizeof(display), ">> %s <<", display);
 					}
 					case 100: {
 						Format(display, sizeof(display), "%T", "Menu_Quality100", client);
+						if(num==glove_Quality[client]) Format(display, sizeof(display), ">> %s <<", display);
 					}
 				}
 			}
