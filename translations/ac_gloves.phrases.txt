@@ -1,0 +1,98 @@
+"Phrases"
+{
+	"Restored"
+	{
+		"en"	"Your gloves restored!"
+		"ru"	"Ваши перчатки восстановлены!"
+	}
+	"Menu_Title"
+	{
+		"en"	"Glove selection:"
+		"ru"	"Выбор перчаток:"
+	}
+	"Menu_Standart"
+	{
+		"en"	"Default"
+		"ru"	"Стандартные"
+	}
+	"Menu_Quality"
+	{
+		"en"	"Quality"
+		"ru"	"Качество"
+	}
+	"Menu_Back"
+	{
+		"en"	"Back"
+		"ru"	"Назад"
+	}
+	"Menu_Close"
+	{
+		"en"	"Close"
+		"ru"	"Закрыть"
+	}
+	"Menu_QualityTitle"
+	{
+		"en"	"Quality selection"
+		"ru"	"Выбор качества"
+	}
+	"Menu_Quality100"
+	{
+		"en"	"Factory New"
+		"ru"	"Прямо с завода"
+	}
+	"Menu_Quality75"
+	{
+		"en"	"Minimal Wear"
+		"ru"	"Поношенное"
+	}
+	"Menu_Quality50"
+	{
+		"en"	"Field-Tested"
+		"ru"	"После полевых испытаний"
+	}
+	"Menu_Quality25"
+	{
+		"en"	"Battle-Scarred"
+		"ru"	"Закаленное в боях"
+	}
+	"Menu_Quality0"
+	{
+		"en"	"Junk \n "
+		"ru"	"Отработанное\n "
+	}
+	"Menu_Random"
+	{
+		"en"	"Random\n "
+		"ru"	"Рандомный\n "
+	}
+	"RandomSet"
+	{
+		"en"	"Random skin for %s%s%s set."
+		"ru"	"Рандомный скин для  %s%s%s установлен."
+	}
+	"NoAccess"
+	{
+		"en"	"You %sdon't have access%s to this gloves!"
+		"ru"	"У вас %sнету доступа%s к этим перчаткам!"
+	}
+	"GloveSave"
+	{
+		"en"	"Gloves %s%s | %s%s saved."
+		"ru"	"Перчатки %s%s | %s%s установлены."
+	}
+	"QualitySave"
+	{
+		"en"	"Selected quality(%s%d%%%s) saved."
+		"ru"	"Выбранное вами качество(%s%d%%%s) сохранено."
+	}
+	"Reset"
+	{
+		"en"	"Gloves reset."
+		"ru"	"Перчатки сброшены."
+	}
+	"ResetTeam"
+	{
+		"en"	"Gloves reset to default %s%s | %s%s."
+		"ru"	"Перчатки сброшены на стандартные %s%s | %s%s."
+	}
+}
