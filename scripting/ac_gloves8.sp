@@ -405,6 +405,7 @@ public int ModelMenuHandler(Menu menu, MenuAction action, int client, int item) 
 				return RedrawMenuItem(display);
 			} else {
 				int team = GetClientTeam(client);
+				if (team < 2 || team_divided == 0)team = 0;
 				else team -= 2;
 				if(StringToInt(buff) == glove_Type[client][team]) {
 					Format(display, sizeof(display), ">> %s <<", display);
@@ -529,6 +530,7 @@ public int SkinMenuHandler(Menu menu, MenuAction action, int client, int item) {
 					//return RedrawMenuItem(title);
 				}
 				int team = GetClientTeam(client);
+				if (team < 2 || team_divided == 0)team = 0;
 				else team -= 2;
 				if(model == glove_Type[client][team] && skin == glove_Skin[client][team]) {
 					if (title[strlen(title) - 2] == '\n') { // Убираем пробел в последнем пункте
