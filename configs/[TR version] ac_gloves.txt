@@ -1,0 +1,188 @@
+// For version 1.4.  Thanks Andy Freeman and Sabri Aydın for translation
+// Some icons, many in the game does not display.
+// Example icons which correctly displays in the game: ☀☁☂☃☄★☆☇☈☉☊☋☌☍☎☏☑☒☓ ☠☡☢☣☤☥☦ // ☟ ☠ ☡ ☢ ☣ ☤ ☥ ☦ ☧ ☨ ☩ ☪ ☫ ☬ ☭ ☮ ☯ 
+// Example icons which correctly displays in the game: ✠ ✡ ✢ ✣ ✤ ✥ ✦ ✧ ✩ ✪ ✫ ✬ ✭ ✮ ✯ ✰ ✱ ✲ ✳ ✴ ✵ ✶ ✷ ✸
+"Gloves"
+{
+	"tag"	"AC" // Plugin tag in chat ([AC] Gloves saved.)
+	"color"	"11" // Look http://ctrlv.cz/shots/2015/03/08/Mlwd.png increasingly number (1 = '01', 11 = '0B', 16 = '10')
+	"random"	"1" // 1 - enable in menu random, 0 - disable
+	// Standard skins for each of the teams, restrict limit does not work
+	// Example: model" "4" - Hand Wraps
+	//           skin" "1" - Leather
+	"t_default_model" "4" // -3 - if you do not need to put any
+	"t_default_skin" "1" 
+	"ct_default_model" "5" // -3 - if you do not need to put any
+	"ct_default_skin" "4"
+	"Models"
+	{
+		"5027"
+		{
+			"name" "Kan Tazısı Eldivenleri ☠" // Displaying title
+			"icon"	"☠" // Icon, UTF-8 symbol
+			"skins"
+			{
+				"10006"
+				{
+					"name" "Alazlanmış"
+					"limit"	"-1" // 1 - Limit with plugin Vip R1ko if you have.  -1 - no restriction, 0 - restrict to non-vip, 1> - quality in percents (99 max, 100 == -1)
+				}
+				"10007"
+				{
+					"name" "Yılan Isırığı"
+					"limit"	"-1"
+				}
+				"10008"
+				{
+					"name" "Bronzlaştırılmıs"
+					"limit"	"-1"
+				}
+				"10039"
+				{
+					"name" "Gerilla"
+					"limit"	"-1"
+				}
+			}
+		}
+		"5030"
+		{
+			"name" "Sporcu Eldivenleri ★"
+			"icon"	"★"
+			"skins"
+			{
+				"10018"
+				{
+					"name" "Süper İletken"
+					"limit"	"-1"
+				}
+				"10019"
+				{
+					"name" "Kurak"
+					"limit"	"-1"
+				}
+				"10037"
+				{
+					"name" "Pandora'nın Kutusu"
+					"limit"	"-1"
+				}
+				"10038"
+				{
+					"name" "Labirent"
+					"limit"	"-1"
+				}
+			}
+		}
+		"5031"
+		{
+			"name" "Sürücü Eldivenleri ☸"
+			"icon"	"☸"
+			"skins"
+			{
+				"10013"
+				{
+					"name" "Kızıl Örgü"
+					"limit"	"-1"
+				}
+				"10015"
+				{
+					"name" "Konvoy"
+					"limit"	"-1"
+				}
+				"10016"
+				{
+					"name" "Kızıl Ağ"
+					"limit"	"-1"
+				}
+				"10040"
+				{
+					"name" "Elmas Yüzüğü"
+					"limit"	"-1"
+				}
+			}
+		}
+		"5032"
+		{
+			"name" "El Sargıları ☄"
+			"icon"	"☄"
+			"skins"
+			{
+				"10009"
+				{
+					"name" "Deri"
+					"limit"	"-1"
+				}
+				"10010"
+				{
+					"name" "Cam DDPAT"
+					"limit"	"-1"
+				}
+				"10021"
+				{
+					"name" "Katliam"
+					"limit"	"-1"
+				}
+				"10036"
+				{
+					"name" "Çorak Arazi"
+					"limit"	"-1"
+				}
+			}
+		}
+		"5033"
+		{
+			"name" "Motorcu Eldivenleri ☍"
+			"icon"	"☍"
+			"skins"
+			{
+				"10024"
+				{
+					"name" "Tutulma"
+					"limit"	"-1"
+				}
+				"10026"
+				{
+					"name" "Yeşil Nane"
+					"limit"	"-1"
+				}
+				"10027"
+				{
+					"name" "Boom!"
+					"limit"	"-1"
+				}
+				"10028"
+				{
+					"name" "Serin Esinti"
+					"limit"	"-1"
+				}
+			}
+		}
+		"5034"
+		{
+			"name" "Uzman Eldivenleri ✦"
+			"icon"	"✦"
+			"skins"
+			{
+				"10030"
+				{
+					"name" "Orman DDPAT"
+					"limit"	"-1"
+				}
+				"10033"
+				{
+					"name" "Kızıl Kimono"
+					"limit"	"-1"
+				}
+				"10034"
+				{
+					"name" "Zümrüt Ağ"
+					"limit"	"-1"
+				}
+				"10035"
+				{
+					"name" "Astar"
+					"limit"	"-1"
+				}
+			}
+		}
+	}
+}

@@ -16,7 +16,7 @@
  */
 public Plugin myinfo = {
 	name = "AC Gloves", author = "Aircraft(diller110)",
-	description = "Set in-game gloves",	version = "1.4", url = "thanks to Franc1sco && Pheonix"
+	description = "Set in-game gloves",	version = "1.4.1", url = "thanks to Franc1sco && Pheonix"
 };
 
 char tag1[16];
@@ -105,8 +105,7 @@ public int TempMenuHandler(Menu menu, MenuAction action, int client, int item) {
 			
 		}
 	}
-}
-*/
+}*/
 public void OnPluginEnd() {
 	for(int i = 1; i <= MaxClients; i++)
 		if(gloves[i] != -1 && IsWearable(gloves[i])) {
@@ -320,6 +319,8 @@ public int ModelMenuHandler(Menu menu, MenuAction action, int client, int item) 
 			}
 			Format(buff2, sizeof(buff2), "%T", "Menu_Back", LANG_SERVER);
 			SkinMenu.AddItem("_back", buff2);
+			Format(buff2, sizeof(buff2), "%T", "Menu_Close", LANG_SERVER);
+			SkinMenu.AddItem("_close", buff2);
 			SkinMenu.Pagination = MENU_NO_PAGINATION;
 			SkinMenu.ExitButton = false;
 			SkinMenu.Display(client, 40);
@@ -414,7 +415,7 @@ public int QualityMenuHandler(Menu menu, MenuAction action, int client, int item
 			} else ModelMenu.Display(client, 40);
 		}
 		case MenuAction_DrawItem: { // Заготовка для ограничения по качеству
-			// PrintToChatAll("Drawitem");
+		
 		}
 	}
 	return 0;
@@ -425,7 +426,6 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 		int wear = GetEntPropEnt(client, Prop_Send, "m_hMyWearables");
 		if(wear == -1) { //  && IsWearable(wear)
 			SetEntProp(client, Prop_Send, "m_nBody", 0);
-			//PrintToChat(client, "removed");
 			//SetEntPropEnt(client, Prop_Send, "m_hMyWearables", -1);
 		}
 		//SetEntProp(client, Prop_Send, "m_nBody", 0);
@@ -436,7 +436,6 @@ public void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast
 	if(!IsFakeClient(client) && GetEntProp(client, Prop_Send, "m_bIsControllingBot") != 1) {
 		int wear = GetEntPropEnt(client, Prop_Send, "m_hMyWearables");
 		if(wear == -1) {
-			//CreateTimer(0.0, FakeTimer, client-100);
 			SetGlove(client);
 		} else {
 			SetEntProp(client, Prop_Send, "m_nBody", 1);
@@ -468,7 +467,7 @@ stock void SaveGlove(int client, int model = -1, int skin = -1, int quality = -1
 	//PrintToServer("SaveGlove %d %d %d %d %d", client, model, skin, quality, inform);
 	if (!IsClientConnected(client) && !IsClientInGame(client)) return;
 	char buff[8];
-	if(model != -1) {
+	if(model > 0) {
 		IntToString(model, buff, sizeof(buff));
 		SetClientCookie(client, ck_Glove_Type, buff);
 		glove_Type[client] = model;
@@ -489,7 +488,7 @@ stock void SaveGlove(int client, int model = -1, int skin = -1, int quality = -1
 				GetSkinName(model, skin, buff3)
 				//if(inform) PrintToChat(client, "%s Перчатки %s%s | %s \x01установлены.", tag1, clr, buff2, buff3);
 				if(inform) PrintToChat(client, "%s %t", tag1, "GloveSave", clr, buff2, buff3, 1);
-				if(limit > 0) {
+				if(limit > 0 && limit != 100) {
 					//PrintToChat(client, "%s Качество будет %sограничено%s до %s%d%%%s с этими перчатками.", tag1, clr, 1, clr, limit, 1);
 					PrintToChat(client, "%s %t", tag1, "LimitQuality", clr, 1, clr, limit, 1);
 				}
@@ -507,14 +506,16 @@ stock void SaveGlove(int client, int model = -1, int skin = -1, int quality = -1
 		SetClientCookie(client, ck_Glove_Quality, buff);
 		//PrintToChat(client, "%s Выбранное вами качество(%s%d%%\x01) сохранено.", tag1, clr, quality);
 		PrintToChat(client, "%s %t", tag1, "QualitySave", clr, quality, 1);
-		int limit = GloveAccess(client, glove_Type[client], glove_Skin[client]);
-		if(limit == 0) {
-			//PrintToChat(client, "%s Выбранное качество не доступно с этими перчатками.", tag1);
-			PrintToChat(client, "%s %t", tag1, "RestrictQuality");
-		} else if(limit > 0) {
-			if(quality>limit) {
-				//PrintToChat(client, "%s Выбранное будет %sограничено%s до %s%d%%%s с этими перчатками.", tag1, clr, 1, clr, limit, 1);
-				PrintToChat(client, "%s %t", tag1, "LimitQuality2", clr, 1, clr, limit, 1);
+		if(skin > 0) {
+			int limit = GloveAccess(client, glove_Type[client], glove_Skin[client]);
+			if(limit == 0) {
+				//PrintToChat(client, "%s Выбранное качество не доступно с этими перчатками.", tag1);
+				PrintToChat(client, "%s %t", tag1, "RestrictQuality");
+			} else if(limit > 0) {
+				if(quality>limit) {
+					//PrintToChat(client, "%s Выбранное будет %sограничено%s до %s%d%%%s с этими перчатками.", tag1, clr, 1, clr, limit, 1);
+					PrintToChat(client, "%s %t", tag1, "LimitQuality2", clr, 1, clr, limit, 1);
+				}
 			}
 		}
 	}
@@ -524,51 +525,55 @@ stock void SetGlove(int client, int model = -1, int skin = -1, int wear = -1) {
 	//PrintToChat(client, "Data  Model: %d Skin: %d Wear: %d", glove_Type[client], glove_Skin[client], glove_Quality[client]);
 	if (!IsClientConnected(client) || !IsClientInGame(client) || IsFakeClient(client))
 		return;
-	if((model == -1 || skin == -1) && model != -3) {
-		if(glove_Type[client] != -1 && glove_Skin[client] != -1) {
-			model = glove_Type[client];
-			skin = glove_Skin[client];
-		} else {	
-			switch(GetClientTeam(client)){
-				case 2: {
-					model = t_default_model;
-					skin = t_default_skin;
-				}
-				case 3: {
-					model = ct_default_model;
-					skin = ct_default_skin;
+	if(model != -3) {
+		if((model == -1 || skin == -1)) {
+			if(glove_Type[client] != -1 && glove_Skin[client] != -1) {
+				model = glove_Type[client];
+				skin = glove_Skin[client];
+			} else {
+				switch(GetClientTeam(client)){
+					case 2: {
+						model = t_default_model;
+						skin = t_default_skin;
+					}
+					case 3: {
+						model = ct_default_model;
+						skin = ct_default_skin;
+					}
 				}
 			}
 		}
-	}
-	int limit = GloveAccess(client, model, skin);
-	if(skin == -2) {
-		static int tries = 0;
-		do {
-			skin = GetRandomSkin(model);
-			limit = GloveAccess(client, model, skin);
-		} while (tries++ < 10 && (limit == 0));
-		if(tries > 9 && limit == 0) {
-			//PrintToChat(client, "%s Ошибка! У вас %sнет доступа%s к этим перчаткам.", tag1, clr, 1);
-			PrintToChat(client, "%s %t", tag1, "NoAccess", clr, 1);
-			ResetGlove(client);
-			SetGlove(client);
-			return;
-		}
-		tries = 0;
-	}
-	if(wear == -1) {
-		if(glove_Quality[client] != -1)	wear = glove_Quality[client];
-		else wear = 100;
-		
-		if(limit == 0) {
-			//PrintToChat(client, "%s Ошибка! У вас %sнет доступа%s к этим перчаткам.", tag1, clr, 1);
-			PrintToChat(client, "%s %t", tag1, "NoAccess", clr, 1);
-			ResetGlove(client);
-			SetGlove(client);
-			return;
-		} else if(limit > 0 && wear > limit) {
-			wear = limit;
+		if(model != -3) {
+			int limit = (skin<1)?100:GloveAccess(client, model, skin);
+			if(skin == -2) {
+				static int tries = 0;
+				do {
+					skin = GetRandomSkin(model);
+					limit = GloveAccess(client, model, skin);
+				} while (tries++ < 10 && (limit == 0));
+				if(tries > 9 && limit == 0) {
+					//PrintToChat(client, "%s Ошибка! У вас %sнет доступа%s к этим перчаткам.", tag1, clr, 1);
+					PrintToChat(client, "%s %t", tag1, "NoAccess", clr, 1);
+					ResetGlove(client);
+					SetGlove(client);
+					return;
+				}
+				tries = 0;
+			}
+			if(wear == -1) {
+				if(glove_Quality[client] != -1)	wear = glove_Quality[client];
+				else wear = 100;
+				
+				if(limit == 0) {
+					//PrintToChat(client, "%s Ошибка! У вас %sнет доступа%s к этим перчаткам.", tag1, clr, 1);
+					PrintToChat(client, "%s %t", tag1, "NoAccess", clr, 1);
+					ResetGlove(client);
+					SetGlove(client);
+					return;
+				} else if(limit > 0 && wear > limit) {
+					wear = limit;
+				}
+			}
 		}
 	}
 	int current = GetEntPropEnt(client, Prop_Send, "m_hMyWearables");
@@ -583,9 +588,7 @@ stock void SetGlove(int client, int model = -1, int skin = -1, int wear = -1) {
 		AcceptEntityInput(gloves[client], "Kill");
 		gloves[client] = -1;
 	}
-	int item = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
-	SetEntPropEnt(client, Prop_Send, "m_hActiveWeapon", -1); 
-	if(model != -1 && model != -3) {
+	if(model > 0 && skin > 0) {
 		int ent = CreateEntityByName("wearable_item");
 		if(ent != -1 && IsValidEdict(ent)) {
 			gloves[client] = ent;
@@ -605,6 +608,8 @@ stock void SetGlove(int client, int model = -1, int skin = -1, int wear = -1) {
 	} else {
 		SetEntProp(client, Prop_Send, "m_nBody", 0);
 	}
+	int item = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
+	SetEntPropEnt(client, Prop_Send, "m_hActiveWeapon", -1); 
 	DataPack ph = new DataPack();
 	WritePackCell(ph, EntIndexToEntRef(client));
 	if(IsValidEntity(item))	WritePackCell(ph, EntIndexToEntRef(item));
@@ -628,9 +633,10 @@ stock bool IsWearable(int ent) {
 	return true;
 }
 stock int GloveAccess(int client, int model, int skin) {
+	if (model < 0)ThrowError("Wrong model index %d, check code!", model);
+	if (skin < 0)ThrowError("Wrong skin index %d, check code!", skin);
 	if (model == t_default_model && skin == t_default_skin)return 100;
 	if (model == ct_default_model && skin == ct_default_skin)return 100;
-	
 	int limit = GetSkinLimit(model, skin);
 	if (limit == -1) return 100;
 	else if(vip_loaded && VIP_IsClientVIP(client)) return -1; // Игрок вип
@@ -646,32 +652,35 @@ stock void ResetGlove(int client, bool inform = true) {
 	SetClientCookie(client, ck_Glove_Quality, "-1");
 	//SetEntPropEnt(client, Prop_Send, "m_hMyWearables", -1);
 	SetGlove(client);
-	int team = GetClientTeam(client);
-	if(team == 2) {
-		if(t_default_model != -3) {
-			GetModelName(t_default_model, buff2);
-			GetSkinName(t_default_model, t_default_skin, buff3);
-			//if(inform) PrintToChat(client, "%s Перчатки сброшены на стандартные %s%s | %s", tag1, clr, buff2, buff3);
-			if(inform) PrintToChat(client, "%s %t", tag1, "ResetTeam", clr, buff2, buff3, 1);
+	if(inform) {
+		int team = GetClientTeam(client);
+		if(team == 2) {
+			if(t_default_model != -3) {
+				GetModelName(t_default_model, buff2);
+				GetSkinName(t_default_model, t_default_skin, buff3);
+				//if(inform) PrintToChat(client, "%s Перчатки сброшены на стандартные %s%s | %s", tag1, clr, buff2, buff3);
+				PrintToChat(client, "%s %t", tag1, "ResetTeam", clr, buff2, buff3, 1);
+			} else {
+				PrintToChat(client, "%s %t", tag1, "Reset");
+			}
+		} else if(team == 3) {
+			if(ct_default_model != -3) {
+				GetModelName(ct_default_model, buff2);
+				GetSkinName(ct_default_model, ct_default_skin, buff3);
+				//if(inform) PrintToChat(client, "%s Перчатки сброшены на стандартные %s%s | %s", tag1, clr, buff2, buff3);
+				PrintToChat(client, "%s %t", tag1, "ResetTeam", clr, buff2, buff3, 1);
+			} else {
+				PrintToChat(client, "%s %t", tag1, "Reset");
+			}
 		} else {
-			if(inform) PrintToChat(client, "%s %t", tag1, "Reset");
+			//if(inform) PrintToChat(client, "%s Перчатки сброшены.", tag1);
+			PrintToChat(client, "%s %t", tag1, "Reset");
 		}
-	} else if(team == 3) {
-		if(ct_default_model != -3) {
-			GetModelName(ct_default_model, buff2);
-			GetSkinName(ct_default_model, ct_default_skin, buff3);
-			//if(inform) PrintToChat(client, "%s Перчатки сброшены на стандартные %s%s | %s", tag1, clr, buff2, buff3);
-			if(inform) PrintToChat(client, "%s %t", tag1, "ResetTeam", clr, buff2, buff3, 1);
-		} else {
-			if(inform) PrintToChat(client, "%s %t", tag1, "Reset");
-		}
-	} else {
-		//if(inform) PrintToChat(client, "%s Перчатки сброшены.", tag1);
-		if(inform) PrintToChat(client, "%s %t", tag1, "Reset");
 	}
 }
 // ArrayList wrapper
 stock int GetModelPos(int model) {
+	if (model < 0)ThrowError("Wrong model index %d, check code!", model);
 	if(model<=GetModelsCount()) {
 		int temp = 1;
 		int position = 1;
@@ -684,6 +693,8 @@ stock int GetModelPos(int model) {
 	return -1;
 }
 stock int GetSkinPos(int model, int skin) {
+	if (model < 0)ThrowError("Wrong model index %d, check code!", model);
+	if (skin < 0)ThrowError("Wrong skin index %d, check code!", skin);
 	int position = GetModelPos(model);
 	if(skin<=alModels.Get(position + 4)) {
 		return position+5+((skin>1)?(skin-1)*3:0);
@@ -719,132 +730,4 @@ stock void GetSkinName(int model, int skin, char buffer[MENU_TEXT]) {
 }
 stock int GetSkinLimit(int model, int skin) {
 	return alModels.Get(GetSkinPos(model, skin) + 2);
-}
-// TEMP
-stock void DebugWearable(int ent) {
-	char buff[128];
-	if(GetEntityClassname(ent, buff, sizeof(buff)))
-		WriteFileLine(file, "[GL] Entity %d GetEntityClassname: %s", ent, buff);
-	if(GetEntityNetClass(ent, buff, sizeof(buff)))
-		WriteFileLine(file, "[GL] Entity %d GetEntityNetClass: %s", ent, buff);
-	GetPropSend2(ent, 1, "m_cellbits");
-	GetPropSend2(ent, 1, "m_cellX");
-	GetPropSend2(ent, 1, "m_cellY");
-	GetPropSend2(ent, 1, "m_cellZ");
-	GetPropSend2(ent, 3, "m_vecOrigin");
-	GetPropSend2(ent, 1, "m_nModelIndex");
-	GetPropSend2(ent, 3, "m_vecMins");
-	GetPropSend2(ent, 3, "m_vecMaxs");
-	GetPropSend2(ent, 1, "m_nSolidType");
-	GetPropSend2(ent, 1, "m_usSolidFlags");
-	GetPropSend2(ent, 1, "m_nSurroundType");
-	GetPropSend2(ent, 1, "m_triggerBloat");
-	GetPropSend2(ent, 3, "m_vecSpecifiedSurroundingMins");
-	GetPropSend2(ent, 3, "m_vecSpecifiedSurroundingMaxs");
-	GetPropSend2(ent, 1, "m_nRenderFX");
-	GetPropSend2(ent, 1, "m_nRenderMode");
-	GetPropSend2(ent, 1, "m_fEffects");
-	GetPropSend2(ent, 1, "m_clrRender");
-	GetPropSend2(ent, 1, "m_iTeamNum");
-	GetPropSend2(ent, 1, "m_iPendingTeamNum");
-	GetPropSend2(ent, 1, "m_CollisionGroup");
-	GetPropSend2(ent, 2, "m_flElasticity");
-	GetPropSend2(ent, 2, "m_flShadowCastDistance");
-	GetPropSend2(ent, 5, "m_hOwnerEntity");
-	GetPropSend2(ent, 5, "m_hEffectEntity");
-	GetPropSend2(ent, 5, "moveparent");
-	GetPropSend2(ent, 1, "m_iParentAttachment");
-	GetPropSend2(ent, 4, "m_iName");
-	GetPropSend2(ent, 1, "movetype");
-	GetPropSend2(ent, 1, "movecollide");
-	GetPropSend2(ent, 3, "m_angRotation");
-	GetPropSend2(ent, 1, "m_iTextureFrameIndex");
-	GetPropSend2(ent, 1, "m_bSimulatedEveryTick");
-	GetPropSend2(ent, 1, "m_bAnimatedEveryTick");
-	GetPropSend2(ent, 1, "m_bAlternateSorting");
-	GetPropSend2(ent, 1, "m_bSpotted");
-	GetPropSend2(ent, 1, "m_bIsAutoaimTarget");
-	GetPropSend2(ent, 2, "m_fadeMinDist");
-	GetPropSend2(ent, 2, "m_fadeMaxDist");
-	GetPropSend2(ent, 2, "m_flFadeScale");
-	GetPropSend2(ent, 1, "m_nMinCPULevel");
-	GetPropSend2(ent, 1, "m_nMaxCPULevel");
-	GetPropSend2(ent, 1, "m_nMinGPULevel");
-	GetPropSend2(ent, 1, "m_nMaxGPULevel");
-	GetPropSend2(ent, 2, "m_flUseLookAtAngle");
-	GetPropSend2(ent, 2, "m_flLastMadeNoiseTime");
-	GetPropSend2(ent, 1, "m_nForceBone");
-	GetPropSend2(ent, 3, "m_vecForce");
-	GetPropSend2(ent, 1, "m_nSkin");
-	GetPropSend2(ent, 1, "m_nBody");
-	GetPropSend2(ent, 1, "m_nHitboxSet");
-	GetPropSend2(ent, 2, "m_flModelScale");
-	GetPropSend2(ent, 1, "m_nSequence");
-	GetPropSend2(ent, 2, "m_flPlaybackRate");
-	GetPropSend2(ent, 1, "m_bClientSideAnimation");
-	GetPropSend2(ent, 1, "m_bClientSideFrameReset");
-	GetPropSend2(ent, 1, "m_bClientSideRagdoll");
-	GetPropSend2(ent, 1, "m_nNewSequenceParity");
-	GetPropSend2(ent, 1, "m_nResetEventsParity");
-	GetPropSend2(ent, 1, "m_nMuzzleFlashParity");
-	GetPropSend2(ent, 1, "m_hLightingOrigin");
-	GetPropSend2(ent, 2, "m_flFrozen");
-	GetPropSend2(ent, 1, "m_ScaleType");
-	GetPropSend2(ent, 1, "m_bSuppressAnimSounds");
-	GetPropSend2(ent, 1, "m_blinktoggle");
-	GetPropSend2(ent, 3, "m_viewtarget");
-	GetPropSend2(ent, 1, "m_hOuter");
-	GetPropSend2(ent, 1, "m_ProviderType");
-	GetPropSend2(ent, 1, "m_iReapplyProvisionParity");
-	GetPropSend2(ent, 1, "m_iItemDefinitionIndex");
-	GetPropSend2(ent, 1, "m_iEntityLevel");
-	GetPropSend2(ent, 1, "m_iItemIDHigh");
-	GetPropSend2(ent, 1, "m_iItemIDLow");
-	GetPropSend2(ent, 1, "m_iAccountID");
-	GetPropSend2(ent, 1, "m_iEntityQuality");
-	GetPropSend2(ent, 1, "m_bInitialized");
-	GetPropSend2(ent, 4, "m_szCustomName");
-	GetPropSend2(ent, 1, "m_OriginalOwnerXuidLow");
-	GetPropSend2(ent, 1, "m_OriginalOwnerXuidHigh");
-	GetPropSend2(ent, 1, "m_nFallbackPaintKit");
-	GetPropSend2(ent, 1, "m_nFallbackSeed");
-	GetPropSend2(ent, 2, "m_flFallbackWear");
-	GetPropSend2(ent, 1, "m_nFallbackStatTrak");
-}
-stock void GetPropSend2(int ent, int type, char[] key) {
-	//if (!IsWearable(ent))return;
-	switch(type) {
-		case 1: {
-			PrintToServer("[GL] %d int '%s': %d", ent, key, GetEntProp(ent, Prop_Send, key));
-		}
-		case 2: {
-			PrintToServer("[GL] %d float '%s': %.4f", ent, key, GetEntPropFloat(ent, Prop_Send, key));
-		}
-		case 3: {
-			float vec[3];
-			GetEntPropVector(ent, Prop_Send, key, vec);
-			PrintToServer("[GL] %d vec '%s': %.2f %.2f %.2f", ent, key, vec[0], vec[1], vec[2]);
-		}
-		case 4: {
-			char buff2[48];
-			GetEntPropString(ent, Prop_Send, key, buff2, sizeof(buff2));
-			PrintToServer("[GL] %d str '%s': %s", ent, key, buff2);
-		}
-		case 5: {
-			char buff2[48];
-			int ent2 = GetEntPropEnt(ent, Prop_Send, key);
-			if(IsValidEntity(ent2)) {
-				GetEntityNetClass(ent2, buff2, sizeof(buff2));
-			} else {
-				ent2 = EntRefToEntIndex(ent2);
-				if(IsValidEntity(ent2)){
-					GetEntityNetClass(ent2, buff2, sizeof(buff2));
-				} else {
-					ent2 = GetEntProp(ent, Prop_Send, key);
-					strcopy(buff2, sizeof(buff2), "Falied to get Ent");
-				}
-			}
-			PrintToServer("[GL] %d ent '%s': %d - %s", ent, key, ent2, buff2);
-		}
-	}
 }

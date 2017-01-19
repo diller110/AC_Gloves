@@ -4,110 +4,132 @@
 	{
 		"en"	"Your gloves restored!"
 		"ru"	"Ваши перчатки восстановлены!"
+		"tr"	"Eldivenleriniz Eski Haline Getirildi!"
 	}
 	"Menu_Title"
 	{
 		"en"	"Glove selection:"
-		"ru"	"Выбор перчаток:"
+		"ru"	"Выбор перчаток:"	
+		"tr"	"Eldiven Secimi:"
 	}
 	"Menu_Standart"
 	{
 		"en"	"Default"
-		"ru"	"Стандартные"
+		"ru"	"Стандартные"	
+		"tr"	"Default"
 	}
 	"Menu_Quality"
 	{
 		"en"	"Quality"
-		"ru"	"Качество"
+		"ru"	"Качество"	
+		"tr"	"Kalite"
 	}
 	"Menu_Back"
 	{
 		"en"	"Back"
-		"ru"	"Назад"
+		"ru"	"Назад"	
+		"tr"	"Geri"
 	}
 	"Menu_Close"
 	{
 		"en"	"Close"
 		"ru"	"Закрыть"
+		"tr"	"Kapat"
 	}
 	"Menu_QualityTitle"
 	{
 		"en"	"Quality selection"
 		"ru"	"Выбор качества"
+		"tr"	"Eldiven Kalitesi Sec"
 	}
 	"Menu_Quality100"
 	{
 		"en"	"Factory New"
 		"ru"	"Прямо с завода"
+		"tr"	"Fabrikadan Yeni Cikmis"
 	}
 	"Menu_Quality75"
 	{
 		"en"	"Minimal Wear"
 		"ru"	"Поношенное"
+		"tr"	"Az Asinmis"
 	}
 	"Menu_Quality50"
 	{
 		"en"	"Field-Tested"
 		"ru"	"После полевых испытаний"
+		"tr"	"Sahada Test Edilmis"
 	}
 	"Menu_Quality25"
 	{
 		"en"	"Battle-Scarred"
 		"ru"	"Закаленное в боях"
+		"tr"	"Savas Gormus"
 	}
 	"Menu_Quality0"
 	{
 		"en"	"Junk \n "
 		"ru"	"Отработанное\n "
+		"tr"	"Hurda \n "
 	}
 	"Menu_Random"
 	{
 		"en"	"Random\n "
 		"ru"	"Рандомный\n "
+		"tr"	"Rastgele\n "
 	}
 	"RandomSet"
 	{
 		"en"	"Random skin for %s%s%s set."
 		"ru"	"Рандомный скин для  %s%s%s установлен."
+		"tr"	"Rastgele Skin %s%s%s Sec."
 	}
 	"NoAccess"
 	{
-		"en"	"Error! You %sdon't have access%s to this gloves!"
-		"ru"	"Ошибка! У вас %sнет доступа%s к этим перчаткам!"
+		"en"	"You %sdon't have access%s to this gloves!"
+		"ru"	"У вас %sнету доступа%s к этим перчаткам!"	
+		"tr"	"Bu eldiven %skomutuna yetkin%s YOK!"
 	}
 	"GloveSave"
 	{
 		"en"	"Gloves %s%s | %s%s saved."
 		"ru"	"Перчатки %s%s | %s%s установлены."
+		"tr"	"Eldivenler %s%s | %s%s Kaydedildi."
 	}
 	"QualitySave"
 	{
 		"en"	"Selected quality(%s%d%%%s) saved."
 		"ru"	"Выбранное вами качество(%s%d%%%s) сохранено."
+		"tr"	"Secilen Kalite(%s%d%%%s) Kaydedildi."
 	}
 	"Reset"
 	{
 		"en"	"Gloves reset."
 		"ru"	"Перчатки сброшены."
+		"tr"	"Eldivenleri Sifirla."
 	}
 	"ResetTeam"
 	{
 		"en"	"Gloves reset to default %s%s | %s%s."
 		"ru"	"Перчатки сброшены на стандартные %s%s | %s%s."
+		"tr"	"Takim Eldivenleri Defaulta Alindi %s%s | %s%s."
 	}
 	"LimitQuality"
 	{
 		"en"	"Quality will be %slimited%s to %s%d%%%s with current gloves."
 		"ru"	"Качество будет %sограничено%s до %s%d%%%s с данными перчатками."
+		"tr"	"Mevcut eldivenlerde kalite %ssinirlamayla%s ile %s%d%%%s sinirlandirilmistir."
 	}
 	"LimitQuality2"
 	{
 		"en"	"Choised quality be %slimited%s to %s%d%%%s with current gloves."
 		"ru"	"Выбранное будет %sограничено%s до %s%d%%%s с этими перчатками."
+		"tr"	"Secilen eldiven kalitesi %ssinirlama%s ile %s%d%%%s degistirilmistir."
 	}
 	"RestrictQuality"
 	{
 		"en"	"Choised quality not available with current gloves."
 		"ru"	"Выбранное качество не доступно с этими перчатками."
+		"tr"	"Secilen kalite mevcut eldivenlerde uygulanamiyor."
 	}
 }
