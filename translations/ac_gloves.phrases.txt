@@ -5,151 +5,177 @@
 		"en"	"Your gloves restored!"
 		"ru"	"Ваши перчатки восстановлены!"
 		"tr"	"Eldivenleriniz Eski Haline Getirildi!"
+		"fi"	"Sinun käsineet ovat palautettu!"
 	}
 	"Menu_Title"
 	{
 		"en"	"Glove selection:"
 		"ru"	"Выбор перчаток:"	
 		"tr"	"Eldiven Secimi:"
+		"fi"	"Käsineiden valinta:"
 	}
 	"Menu_Standart"
 	{
 		"en"	"Default"
 		"ru"	"Стандартные"	
 		"tr"	"Default"
+		"fi"	"Oletus"
 	}
 	"Menu_Quality"
 	{
 		"en"	"Quality"
 		"ru"	"Качество"	
 		"tr"	"Kalite"
+		"fi"	"Laatu"
 	}
 	"Menu_Back"
 	{
 		"en"	"Back"
 		"ru"	"Назад"	
 		"tr"	"Geri"
+		"fi"	"Takaisin"
 	}
 	"Menu_Close"
 	{
 		"en"	"Close"
 		"ru"	"Закрыть"
 		"tr"	"Kapat"
+		"fi"	"Sulkea"
 	}
 	"Menu_QualityTitle"
 	{
 		"en"	"Quality selection"
 		"ru"	"Выбор качества"
 		"tr"	"Eldiven Kalitesi Sec"
+		"fi"	"Laadun valinta"
 	}
 	"Menu_Quality100"
 	{
 		"en"	"Factory New"
 		"ru"	"Прямо с завода"
 		"tr"	"Fabrikadan Yeni Cikmis"
+		"fi"	"Suoraan tehtaalta"
 	}
 	"Menu_Quality75"
 	{
 		"en"	"Minimal Wear"
 		"ru"	"Поношенное"
 		"tr"	"Az Asinmis"
+		"fi"	"Vähän käytetty"
 	}
 	"Menu_Quality50"
 	{
 		"en"	"Field-Tested"
 		"ru"	"После полевых испытаний"
 		"tr"	"Sahada Test Edilmis"
+		"fi"	"Kenttäkokeiltu"
 	}
 	"Menu_Quality25"
 	{
 		"en"	"Battle-Scarred"
 		"ru"	"Закаленное в боях"
 		"tr"	"Savas Gormus"
+		"fi"	"Reissussa rähjääntynyt"
 	}
 	"Menu_Quality0"
 	{
 		"en"	"Junk \n "
 		"ru"	"Отработанное\n "
 		"tr"	"Hurda \n "
+		"fi"	"Romu \n "
 	}
 	"Menu_Random"
 	{
 		"en"	"Random\n "
 		"ru"	"Рандомный\n "
 		"tr"	"Rastgele\n "
+		"fi"	"Satunnainen\n "
 	}
 	"RandomSet"
 	{
 		"en"	"Random skin for %s%s%s set."
 		"ru"	"Рандомный скин для  %s%s%s установлен."
 		"tr"	"Rastgele Skin %s%s%s Sec."
+		"fi"	"Satunnainen skini %s%s%s asennettu."
 	}
 	"NoAccess"
 	{
 		"en"	"You %sdon't have access%s to this gloves!"
 		"ru"	"У вас %sнету доступа%s к этим перчаткам!"	
 		"tr"	"Bu eldiven %skomutuna yetkin%s YOK!"
+		"fi"	"Sinulla %sEi ole oikeuksia%s näihin käsineisiin!"
 	}
 	"GloveSave"
 	{
 		"en"	"Gloves %s%s | %s%s saved."
 		"ru"	"Перчатки %s%s | %s%s установлены."
 		"tr"	"Eldivenler %s%s | %s%s Kaydedildi."
+		"fi"	"Hanskat %s%s | %s%s ovat tallennettu."
 	}
 	"QualitySave"
 	{
 		"en"	"Selected quality(%s%d%%%s) saved."
 		"ru"	"Выбранное вами качество(%s%d%%%s) сохранено."
 		"tr"	"Secilen Kalite(%s%d%%%s) Kaydedildi."
+		"fi"	"Valitsemasi laatu(%s%d%%%s) on tallennettu."
 	}
 	"Reset"
 	{
 		"en"	"Gloves reset."
 		"ru"	"Перчатки сброшены."
 		"tr"	"Eldivenleri Sifirla."
+		"fi"	"Käsineet ovat nollattu."
 	}
 	"ResetTeam"
 	{
 		"en"	"Gloves reset to default %s%s | %s%s."
 		"ru"	"Перчатки сброшены на стандартные %s%s | %s%s."
 		"tr"	"Takim Eldivenleri Defaulta Alindi %s%s | %s%s."
+		"fi"	"Käsineet ovat nollattu oletukseen %s%s | %s%s."
 	}
 	"LimitQuality"
 	{
 		"en"	"Quality will be %slimited%s to %s%d%%%s with current gloves."
 		"ru"	"Качество будет %sограничено%s до %s%d%%%s с данными перчатками."
 		"tr"	"Mevcut eldivenlerde kalite %ssinirlamayla%s ile %s%d%%%s sinirlandirilmistir."
+		"fi"	"Laatu tulee olemaan %srajoitettu%s %s%d%%%s näihin käsineisiin."
 	}
 	"LimitQuality2"
 	{
 		"en"	"Choised quality be %slimited%s to %s%d%%%s with current gloves."
 		"ru"	"Выбранное будет %sограничено%s до %s%d%%%s с этими перчатками."
 		"tr"	"Secilen eldiven kalitesi %ssinirlama%s ile %s%d%%%s degistirilmistir."
+		"fi"	"Valitsemasi laatu on %srajoitettu%s %s%d%%%s näihin käsineisiin."
 	}
 	"RestrictQuality"
 	{
 		"en"	"Choised quality not available with current gloves."
 		"ru"	"Выбранное качество не доступно с этими перчатками."
 		"tr"	"Secilen kalite mevcut eldivenlerde uygulanamiyor."
+		"fi"	"Valitsemasi laatu ei ole käytettävissä näihin käsineisiin."
 	}
 	"Menu_NoTeamWarning"
 	{
 		"en"	"To select gloves, you should be in T or CT team!"
 		"ru"	"Чтобы выбирать перчатки, нужно находится в команде Т или КТ!"
+		"fi"	"Sinun pitäisi olla T tai CT joukuessa että voisit valita käsineet!"
 	}
 	"Menu_NoTeamTitle"
 	{
-		"en"	" \n \nTo select gloves \njoin T or CT team\n 
+		"en"	" \n \nTo select gloves \njoin T or CT team\n "
 		"ru"	" \n \nЧтобы выбрать перчатки \nзайдите за Т или КТ\n "
+		"fi"	" \n \nEttä voisit valita käsineet sinun pitäisi \nliittyä T tai CT joukkueeseen\n "
 	}
 	"Menu_Title_T" 
 	{
 		"en"	"Glove selection for T:"
 		"ru"	"Выбор перчаток для Т:"
+		"fi"	"Käsineiden valinta T:"
 	}
 	"Menu_Title_CT" 
 	{
 		"en"	"Glove selection for CT:"
 		"ru"	"Выбор перчаток для КТ:"
+		"fi"	"Käsineiden valinta CT:"
 	}
 }
