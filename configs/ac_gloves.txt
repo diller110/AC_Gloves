@@ -1,11 +1,19 @@
 // Настройки limit,limit_type пока не доделаны.
-// В планах также добавить настройку дефолтных перчаток для каждой команды.
+//
+// Некоторые иконки, многие в игре не отображаются, используйте методом проб и ошибок.
+// ☀☁☂☃☄★☆☇☈☉☊☋☌☍☎☏☑☒☓ ☠☡☢☣☤☥☦ // ☟ ☠ ☡ ☢ ☣ ☤ ☥ ☦ ☧ ☨ ☩ ☪ ☫ ☬ ☭ ☮ ☯ 
+// ✠ ✡ ✢ ✣ ✤ ✥ ✦ ✧ ✩ ✪ ✫ ✬ ✭ ✮ ✯ ✰ ✱ ✲ ✳ ✴ ✵ ✶ ✷ ✸ 
 "Gloves"
-{   // ☀☁☂☃☄★☆☇☈☉☊☋☌☍☎☏☑☒☓ ☠☡☢☣☤☥☦ // ☟ ☠ ☡ ☢ ☣ ☤ ☥ ☦ ☧ ☨ ☩ ☪ ☫ ☬ ☭ ☮ ☯ 
-	// ✠ ✡ ✢ ✣ ✤ ✥ ✦ ✧ ✩ ✪ ✫ ✬ ✭ ✮ ✯ ✰ ✱ ✲ ✳ ✴ ✵ ✶ ✷ ✸ 
+{
 	"tag"	"AC" // Тэг в чате ([AC] Перчатки установлены!)
 	"color"	"11" // См. http://ctrlv.cz/shots/2015/03/08/Mlwd.png По порядковому номеру(1 = '01', 11 = '0B', 16 = '10')
 	"limit_type" "1" // 1 - Запрет использования, 2 - Ограничение по качеству
+	// Стандартные скины для каждой из команд, ограничение вип не действует
+	"random"	"1" // 1 - вкл пункт рандома, 0 - выкл
+	"t_default_model" "4"
+	"t_default_skin" "1"
+	"ct_default_model" "5"
+	"ct_default_skin" "4"
 	"Models"
 	{
 		"5027"
@@ -40,7 +48,7 @@
 		"5030"
 		{
 			"name" "Спортивные перчатки"
-			"icon"	"★" // https://unicodelookup.com/#★
+			"icon"	"★"
 			"model" "models/weapons/v_models/arms/glove_sporty/v_glove_sporty.mdl"
 			"skins"
 			{
@@ -69,7 +77,7 @@
 		"5031"
 		{
 			"name" "Водительские перчатки"
-			"icon"	"☸" // https://unicodelookup.com/#☸
+			"icon"	"☸"
 			"model" "models/weapons/v_models/arms/glove_slick/v_glove_slick.mdl"
 			"skins"
 			{
@@ -98,7 +106,7 @@
 		"5032"
 		{
 			"name" "Обмотки рук"
-			"icon"	"☄"  //☬
+			"icon"	"☄"
 			"model" "models/weapons/v_models/arms/glove_handwrap_leathery/v_glove_handwrap_leathery.mdl"
 			"skins"
 			{
@@ -127,7 +135,7 @@
 		"5033"
 		{
 			"name" "Мотоциклетные перчатки"
-			"icon"	"☍"  // https://unicodelookup.com/#☘
+			"icon"	"☍"
 			"model" "models/weapons/v_models/arms/glove_motorcycle/v_glove_motorcycle.mdl"
 			"skins"
 			{
@@ -156,7 +164,7 @@
 		"5034"
 		{
 			"name" "Перчатки спецназа"
-			"icon"	"✦"  //☬
+			"icon"	"✦"
 			"model" "models/weapons/v_models/arms/glove_specialist/v_glove_specialist.mdl"
 			"skins"
 			{
