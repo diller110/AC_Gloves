@@ -72,8 +72,8 @@
 	}
 	"NoAccess"
 	{
-		"en"	"You %sdon't have access%s to this gloves!"
-		"ru"	"У вас %sнету доступа%s к этим перчаткам!"
+		"en"	"Error! You %sdon't have access%s to this gloves!"
+		"ru"	"Ошибка! У вас %sнет доступа%s к этим перчаткам!"
 	}
 	"GloveSave"
 	{
@@ -94,5 +94,20 @@
 	{
 		"en"	"Gloves reset to default %s%s | %s%s."
 		"ru"	"Перчатки сброшены на стандартные %s%s | %s%s."
+	}
+	"LimitQuality"
+	{
+		"en"	"Quality will be %slimited%s to %s%d%%%s with current gloves."
+		"ru"	"Качество будет %sограничено%s до %s%d%%%s с данными перчатками."
+	}
+	"LimitQuality2"
+	{
+		"en"	"Choised quality be %slimited%s to %s%d%%%s with current gloves."
+		"ru"	"Выбранное будет %sограничено%s до %s%d%%%s с этими перчатками."
+	}
+	"RestrictQuality"
+	{
+		"en"	"Choised quality not available with current gloves."
+		"ru"	"Выбранное качество не доступно с этими перчатками."
 	}
 }

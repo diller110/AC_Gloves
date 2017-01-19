@@ -8,22 +8,21 @@
 #define ARRAY_SIZE 96
 #define MENUACTIONS MenuAction_Display|MenuAction_DisplayItem|MenuAction_DrawItem
 /* 60% магии / 40% веры 
- *TODO:
- * 1. 50% Ограничение по vip r1ko
+ * TODO:
+ * 1. 99% Ограничение по vip r1ko
  * 2. ✓ Рандомный скин 
  * 3. ✓ Дефолтный скин для каждой команды
  * 4. ✓ Перевод
  */
 public Plugin myinfo = {
 	name = "AC Gloves", author = "Aircraft(diller110)",
-	description = "Set in-game gloves",	version = "1.3", url = "thanks to Franc1sco && Pheonix"
+	description = "Set in-game gloves",	version = "1.4", url = "thanks to Franc1sco && Pheonix"
 };
 
 char tag1[16];
 ArrayList alModels;
 Menu ModelMenu, QualityMenu;
 int		clr,
-		limit_type,
 		random,
 		t_default_model,
 		t_default_skin,
@@ -42,8 +41,7 @@ public void OnPluginStart() {
 	LoadKV();
 	CreateMenus();
 	
-	//ck_Glove_Type = RegClientCookie("AcGloveType7", "", CookieAccess_Private);
-	ck_Glove_Type = RegClientCookie("AcGloveType7", "", CookieAccess_Public);
+	ck_Glove_Type = RegClientCookie("AcGloveType7", "", CookieAccess_Private);
 	ck_Glove_Skin = RegClientCookie("AcGloveSkin7", "", CookieAccess_Private);
 	ck_Glove_Quality = RegClientCookie("AcGloveQuality7", "", CookieAccess_Private);
 	
@@ -57,7 +55,58 @@ public void OnPluginStart() {
 	RegConsoleCmd("sm_gloves", Cmd_ModelsMenu);
 	RegConsoleCmd("sm_glove", Cmd_ModelsMenu);
 	RegConsoleCmd("sm_gl", Cmd_ModelsMenu);
+	
+	//RegConsoleCmd("sm_gl1", Cmd_GL1);
+	//RegConsoleCmd("sm_gl2", Cmd_GL2);
 }
+/*
+public Action Cmd_GL1(int client, int args) {
+	int body = GetEntProp(client, Prop_Send, "m_nBody");
+	PrintToChat(client, "Body %d", body);
+	Menu temp = CreateMenu(TempMenuHandler);
+	temp.SetTitle("Choise:");
+	char buff[2][18];
+	for (int i = 1; i <= MaxClients; i++) {
+		if(IsClientConnected(i) && IsClientInGame(i) && IsPlayerAlive(i)) {
+			Format(buff[0], sizeof(buff[]), "%d", GetClientUserId(i));
+			Format(buff[1], sizeof(buff[]), "%N", i);
+			temp.AddItem(buff[0], buff[1]);
+		}
+	}
+	temp.Display(client, 40);
+}
+public int TempMenuHandler(Menu menu, MenuAction action, int client, int item) {
+	if (action == MenuAction_Select) {
+		char buff[8]; //, buff2[MENU_TEXT], buff3[MENU_TEXT];
+		menu.GetItem(item, buff, sizeof(buff));
+		int cl = GetClientOfUserId(StringToInt(buff));
+		if(IsClientConnected(cl) && IsClientInGame(cl) && IsPlayerAlive(cl)) {
+			PrintToChat(client, "INTO %d %N is alive", cl, cl);
+			PrintToChat(client, "DATA glove %d model %d skin %d wear %d", gloves[cl], glove_Type[cl], glove_Skin[cl], glove_Quality[cl]);
+			int wear = GetEntPropEnt(cl, Prop_Send, "m_hMyWearables");
+			int body = GetEntProp(cl, Prop_Send, "m_nBody");
+			PrintToChat(client, "REAL body %d glove %d", body, wear);
+		}
+	}	
+}
+*/
+/*public Action Cmd_GL2(int client, int args) {
+	int entCount = GetEntityCount();
+	for(int  i = 0; i <= entCount; i++ ) {
+		//if(IsValidEdict(i)) {
+		//	static char buff[32];
+		//	GetEdictClassname(i, buff, sizeof(buff));
+		//	PrintToServer("%d is edict '%s'", i, buff);
+		//} else
+		if(IsValidEntity(i)) {
+			static char buff[32];
+			GetEntityNetClass(i, buff, sizeof(buff));
+			PrintToServer("%d is entity '%s'", i, buff);
+			
+		}
+	}
+}
+*/
 public void OnPluginEnd() {
 	for(int i = 1; i <= MaxClients; i++)
 		if(gloves[i] != -1 && IsWearable(gloves[i])) {
@@ -105,8 +154,7 @@ public void OnClientCookiesCached(int client) {
 		else glove_Quality[client] = quality;
 		if(IsClientInGame(client) && IsPlayerAlive(client)) {
 			SetGlove(client);
-			//PrintToChat(client, "%s Ваши перчатки восстановлены!", tag1);
-			PrintToChat(client, "%s %t", tag1, "Restored");
+			PrintToChat(client, "%s %t", tag1, "Restored"); //PrintToChat(client, "%s Ваши перчатки восстановлены!", tag1);
 		}
 	}
 }
@@ -115,7 +163,7 @@ public void OnClientDisconnect(int client) {
 		int wear = GetEntPropEnt(client, Prop_Send, "m_hMyWearables");
 		if(wear != -1 && IsWearable(wear)) {
 			AcceptEntityInput(wear, "Kill");
-			if (wear == gloves[client])gloves[client] = -1;
+			if(wear == gloves[client]) gloves[client] = -1;
 		}
 	}
 	if(gloves[client] != -1 && IsWearable(gloves[client])) {
@@ -136,8 +184,6 @@ public void LoadKV() {
 		clr = kv.GetNum("color", 11);
 		if(clr < 1 || clr > 16) clr = 11;
 		Format(tag1, sizeof(tag1), "[%s%s\x01]", clr, tag1);
-		limit_type = kv.GetNum("limit_type", 1);
-		if(limit_type < 1 || limit_type > 2 )limit_type = 1;
 		random = kv.GetNum("random", 1);
 		t_default_model = kv.GetNum("t_default_model", -1);
 		t_default_skin = kv.GetNum("t_default_skin", -1);
@@ -168,7 +214,9 @@ public void LoadKV() {
 								alModels.Push(StringToInt(buff2));
 								kv.GetString("name", buff2, sizeof(buff2));
 								alModels.PushString(buff2);
-								alModels.Push(kv.GetNum("limit", 0));
+								int limit = kv.GetNum("limit", -1);
+								if (limit < -1 || limit > 99) limit = -1;
+								alModels.Push(limit);
 							} while (kv.GotoNextKey(true));
 							kv.GoBack();
 						} else {
@@ -244,13 +292,13 @@ public int ModelMenuHandler(Menu menu, MenuAction action, int client, int item) 
 		char buff[8], buff2[MENU_TEXT], buff3[MENU_TEXT];
 		menu.GetItem(item, buff, sizeof(buff));
 		if(buff[0] == '_') { // Управляющие пункты
-			if(buff[1] == 'r') {
-				ResetGlove(client);
-				menu.Display(client, 40);
-			} else if(buff[1] == 'q'){
-				QualityMenu.Display(client, 20);
-			} else {
-				// Закроется само
+			switch(buff[1]) {
+				case 'r': {
+					ResetGlove(client);
+					menu.Display(client, 40);
+				}
+				case 'q': QualityMenu.Display(client, 20);
+				case 'c': {	}
 			}
 		} else { // Выбраны перчатки
 			int model = StringToInt(buff);
@@ -331,15 +379,24 @@ public int SkinMenuHandler(Menu menu, MenuAction action, int client, int item) {
 			char buff[16];
 			menu.GetItem(item, buff, sizeof(buff));
 			if(buff[0] != '_') {
-				char buffs[2][8];
+				static char buffs[2][8], title[MENU_TEXT];
 				ExplodeString(buff, ":", buffs, 2, 8);
 				int model = StringToInt(buffs[0]);
 				int skin = StringToInt(buffs[1]);
-				if(GetSkinLimit(model, skin)) {
-					char title[MENU_TEXT];
-					menu.GetItem(item, buff, sizeof(buff), _, title, sizeof(title));
+				int limit = GloveAccess(client, model, skin);
+				menu.GetItem(item, buff, sizeof(buff), _, title, sizeof(title));
+				if(limit == 0) {
 					//PrintToChatAll("%d %d %s for vip", model, skin, title);
-					Format(title, sizeof(title), "%s (VIP)", title);
+					if (title[strlen(title) - 2] == '\n') { // Убираем пробел в последнем пункте
+						title[strlen(title) - 2] = '\0';
+						Format(title, sizeof(title), "%s (VIP)\n ", title);
+					} else Format(title, sizeof(title), "%s (VIP)", title);
+					return RedrawMenuItem(title);
+				} else if(limit > 0 && limit != 100) {
+					if (title[strlen(title) - 2] == '\n') { // Убираем пробел в последнем пункте
+						title[strlen(title) - 2] = '\0';
+						Format(title, sizeof(title), "%s (%d%%)\n ", title, limit);
+					} else Format(title, sizeof(title), "%s (%d%%)", title, limit);
 					return RedrawMenuItem(title);
 				}
 			}
@@ -363,39 +420,39 @@ public int QualityMenuHandler(Menu menu, MenuAction action, int client, int item
 	return 0;
 }
 public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast) {
-	/*
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	if(!IsFakeClient(client) && GetEntProp(client, Prop_Send, "m_bIsControllingBot") != 1) {
 		int wear = GetEntPropEnt(client, Prop_Send, "m_hMyWearables");
-		if(wear != -1 && IsWearable(wear)) {
-			PrintToChat(client, "removed");
+		if(wear == -1) { //  && IsWearable(wear)
+			SetEntProp(client, Prop_Send, "m_nBody", 0);
+			//PrintToChat(client, "removed");
 			//SetEntPropEnt(client, Prop_Send, "m_hMyWearables", -1);
 		}
+		//SetEntProp(client, Prop_Send, "m_nBody", 0);
 	}
-	*/
 }
 public void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	if(!IsFakeClient(client) && GetEntProp(client, Prop_Send, "m_bIsControllingBot") != 1) {
 		int wear = GetEntPropEnt(client, Prop_Send, "m_hMyWearables");
 		if(wear == -1) {
-			//PrintToChat(client, "Gloves don't exist");
-			CreateTimer(0.0, FakeTimer, client-100);
+			//CreateTimer(0.0, FakeTimer, client-100);
+			SetGlove(client);
 		} else {
-			//PrintToChat(client, "Gloves exist");
+			SetEntProp(client, Prop_Send, "m_nBody", 1);
 		}
 	}
 }
-public Action FakeTimer(Handle timer, int client) {
+/* public Action FakeTimer(Handle timer, int client) {
 	if(client < 0) CreateTimer(0.0, FakeTimer, client+100);
 	else SetGlove(client);
 	return Plugin_Stop;
-}
+} */
 public Action Cmd_ModelsMenu(int client, int args) {
 	if(args == 0) {
 		ModelMenu.Display(client, 40);
 	} else {
-		if(args >= 2) {
+		if(args >= 2) { // По хорошему это нужно убрать, т.к. любой сможет поставить любой скин
 			char buff[10];
 			GetCmdArg(1, buff, sizeof(buff));
 			int type = StringToInt(buff);
@@ -409,14 +466,15 @@ public Action Cmd_ModelsMenu(int client, int args) {
 }
 stock void SaveGlove(int client, int model = -1, int skin = -1, int quality = -1, bool inform = false) {
 	//PrintToServer("SaveGlove %d %d %d %d %d", client, model, skin, quality, inform);
-	if (!IsClientConnected(client) && !IsClientInGame(client))return;
+	if (!IsClientConnected(client) && !IsClientInGame(client)) return;
 	char buff[8];
 	if(model != -1) {
 		IntToString(model, buff, sizeof(buff));
 		SetClientCookie(client, ck_Glove_Type, buff);
 		glove_Type[client] = model;
 		if(skin != -1 && skin != -2) {
-			if(vip_loaded && !GloveAccess(client, model, skin)) {
+			int limit = GloveAccess(client, model, skin);
+			if(limit == 0) {
 					ResetGlove(client, false);
 					//PrintToChat(client, "%s У вас %sнету доступа\x01 к этим перчаткам!", tag1, clr);
 					PrintToChat(client, "%s %t", tag1, "NoAccess", clr, 1);
@@ -427,12 +485,20 @@ stock void SaveGlove(int client, int model = -1, int skin = -1, int quality = -1
 				glove_Skin[client] = skin;
 				if(quality == -1 && glove_Quality[client] == -1)
 					glove_Quality[client] = 100;
-				alModels.GetString(GetModelPos(model)+1, buff2, sizeof(buff2))
-				alModels.GetString(GetSkinPos(model, skin) + 1, buff3, sizeof(buff3));
+				GetModelName(model, buff2);
+				GetSkinName(model, skin, buff3)
 				//if(inform) PrintToChat(client, "%s Перчатки %s%s | %s \x01установлены.", tag1, clr, buff2, buff3);
 				if(inform) PrintToChat(client, "%s %t", tag1, "GloveSave", clr, buff2, buff3, 1);
+				if(limit > 0) {
+					//PrintToChat(client, "%s Качество будет %sограничено%s до %s%d%%%s с этими перчатками.", tag1, clr, 1, clr, limit, 1);
+					PrintToChat(client, "%s %t", tag1, "LimitQuality", clr, 1, clr, limit, 1);
+				}
 			}
 			//PrintToChat(client, "%s Выбранные вами перчатки %sсохранены\x01 в базу.", tag1, clr);
+		} else if(skin == -2){
+			IntToString(skin, buff, sizeof(buff));
+			SetClientCookie(client, ck_Glove_Skin, buff);
+			glove_Skin[client] = skin;
 		}
 	}
 	if(quality != -1) {
@@ -441,13 +507,24 @@ stock void SaveGlove(int client, int model = -1, int skin = -1, int quality = -1
 		SetClientCookie(client, ck_Glove_Quality, buff);
 		//PrintToChat(client, "%s Выбранное вами качество(%s%d%%\x01) сохранено.", tag1, clr, quality);
 		PrintToChat(client, "%s %t", tag1, "QualitySave", clr, quality, 1);
+		int limit = GloveAccess(client, glove_Type[client], glove_Skin[client]);
+		if(limit == 0) {
+			//PrintToChat(client, "%s Выбранное качество не доступно с этими перчатками.", tag1);
+			PrintToChat(client, "%s %t", tag1, "RestrictQuality");
+		} else if(limit > 0) {
+			if(quality>limit) {
+				//PrintToChat(client, "%s Выбранное будет %sограничено%s до %s%d%%%s с этими перчатками.", tag1, clr, 1, clr, limit, 1);
+				PrintToChat(client, "%s %t", tag1, "LimitQuality2", clr, 1, clr, limit, 1);
+			}
+		}
 	}
 }
 stock void SetGlove(int client, int model = -1, int skin = -1, int wear = -1) {
-	//PrintToServer("SetGlove %d %d %d %d", client, model, skin, wear);
+	//PrintToChat(client, "Input Model: %d Skin: %d Wear: %d", model, skin, wear);
+	//PrintToChat(client, "Data  Model: %d Skin: %d Wear: %d", glove_Type[client], glove_Skin[client], glove_Quality[client]);
 	if (!IsClientConnected(client) || !IsClientInGame(client) || IsFakeClient(client))
 		return;
-	if(model == -1 || skin == -1) {
+	if((model == -1 || skin == -1) && model != -3) {
 		if(glove_Type[client] != -1 && glove_Skin[client] != -1) {
 			model = glove_Type[client];
 			skin = glove_Skin[client];
@@ -462,19 +539,43 @@ stock void SetGlove(int client, int model = -1, int skin = -1, int wear = -1) {
 					skin = ct_default_skin;
 				}
 			}
-		}// clear = true;
+		}
 	}
+	int limit = GloveAccess(client, model, skin);
 	if(skin == -2) {
-		skin = GetRandomSkin(model);
+		static int tries = 0;
+		do {
+			skin = GetRandomSkin(model);
+			limit = GloveAccess(client, model, skin);
+		} while (tries++ < 10 && (limit == 0));
+		if(tries > 9 && limit == 0) {
+			//PrintToChat(client, "%s Ошибка! У вас %sнет доступа%s к этим перчаткам.", tag1, clr, 1);
+			PrintToChat(client, "%s %t", tag1, "NoAccess", clr, 1);
+			ResetGlove(client);
+			SetGlove(client);
+			return;
+		}
+		tries = 0;
 	}
 	if(wear == -1) {
 		if(glove_Quality[client] != -1)	wear = glove_Quality[client];
 		else wear = 100;
+		
+		if(limit == 0) {
+			//PrintToChat(client, "%s Ошибка! У вас %sнет доступа%s к этим перчаткам.", tag1, clr, 1);
+			PrintToChat(client, "%s %t", tag1, "NoAccess", clr, 1);
+			ResetGlove(client);
+			SetGlove(client);
+			return;
+		} else if(limit > 0 && wear > limit) {
+			wear = limit;
+		}
 	}
 	int current = GetEntPropEnt(client, Prop_Send, "m_hMyWearables");
 	if(current != -1 && IsWearable(current)) {
+		//SetEntProp(client, Prop_Send, "m_nBody", 0);
+		//SetEntPropEnt(client, Prop_Send, "m_hMyWearables", -1);
 		AcceptEntityInput(current, "Kill");
-		SetEntPropEnt(client, Prop_Send, "m_hMyWearables", -1);
 		if (current == gloves[client]) gloves[client] = -1;
 		//PrintToChat(client, "%s Прошлые перчатки были удалены!", tag1);
 	}
@@ -499,7 +600,7 @@ stock void SetGlove(int client, int model = -1, int skin = -1, int wear = -1) {
 			SetEntPropEnt(ent, Prop_Data, "m_hMoveParent", client);
 			DispatchSpawn(ent);
 			SetEntProp(client, Prop_Send, "m_nBody", 1);
-			//ChangeEdictState(ent);
+			ChangeEdictState(ent);
 		}
 	} else {
 		SetEntProp(client, Prop_Send, "m_nBody", 0);
@@ -508,7 +609,7 @@ stock void SetGlove(int client, int model = -1, int skin = -1, int wear = -1) {
 	WritePackCell(ph, EntIndexToEntRef(client));
 	if(IsValidEntity(item))	WritePackCell(ph, EntIndexToEntRef(item));
 	else WritePackCell(ph, -1);
-	CreateTimer(0.0, AddItemTimer, ph, TIMER_FLAG_NO_MAPCHANGE);  
+	CreateTimer(0.0, AddItemTimer, ph, TIMER_FLAG_NO_MAPCHANGE); 
 }
 public Action AddItemTimer(Handle timer, DataPack ph) {
     int client, item;
@@ -526,10 +627,14 @@ stock bool IsWearable(int ent) {
 	if(StrContains(weaponclass, "wearable", false) == -1) return false;
 	return true;
 }
-stock bool GloveAccess(int client, int model, int skin) {
-	if (GetSkinLimit(model, skin) == 0) return true;
-	else if(vip_loaded && VIP_IsClientVIP(client)) return true;
-	return false;
+stock int GloveAccess(int client, int model, int skin) {
+	if (model == t_default_model && skin == t_default_skin)return 100;
+	if (model == ct_default_model && skin == ct_default_skin)return 100;
+	
+	int limit = GetSkinLimit(model, skin);
+	if (limit == -1) return 100;
+	else if(vip_loaded && VIP_IsClientVIP(client)) return -1; // Игрок вип
+	else return limit;
 }
 stock void ResetGlove(int client, bool inform = true) {
 	char buff2[MENU_TEXT], buff3[MENU_TEXT];
@@ -539,7 +644,7 @@ stock void ResetGlove(int client, bool inform = true) {
 	SetClientCookie(client, ck_Glove_Type, "-3");
 	SetClientCookie(client, ck_Glove_Skin, "-1");
 	SetClientCookie(client, ck_Glove_Quality, "-1");
-	SetEntPropEnt(client, Prop_Send, "m_hMyWearables", -1);
+	//SetEntPropEnt(client, Prop_Send, "m_hMyWearables", -1);
 	SetGlove(client);
 	int team = GetClientTeam(client);
 	if(team == 2) {
@@ -589,7 +694,7 @@ stock int GetRandomModel() {
 	return GetRandomInt(1, GetModelsCount());
 }
 stock int GetRandomSkin(int model) {
-	return GetRandomInt(1, alModels.Get(GetModelPos(model)+4));
+	return GetRandomInt(1, GetSkinsCount(model));
 }
 stock int GetModelsCount(){
 	return alModels.Get(0);

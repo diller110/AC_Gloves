@@ -1,0 +1,188 @@
+// For version 1.4.  Thanks Andy Freeman for translation
+// Some icons, many in the game does not display.
+// Example icons which correctly displays in the game: ☀☁☂☃☄★☆☇☈☉☊☋☌☍☎☏☑☒☓ ☠☡☢☣☤☥☦ // ☟ ☠ ☡ ☢ ☣ ☤ ☥ ☦ ☧ ☨ ☩ ☪ ☫ ☬ ☭ ☮ ☯ 
+// Example icons which correctly displays in the game: ✠ ✡ ✢ ✣ ✤ ✥ ✦ ✧ ✩ ✪ ✫ ✬ ✭ ✮ ✯ ✰ ✱ ✲ ✳ ✴ ✵ ✶ ✷ ✸
+"Gloves"
+{
+	"tag"	"AC" // Plugin tag in chat ([AC] Gloves saved.)
+	"color"	"11" // Look http://ctrlv.cz/shots/2015/03/08/Mlwd.png increasingly number (1 = '01', 11 = '0B', 16 = '10')
+	"random"	"1" // 1 - enable in menu random, 0 - disable
+	// Standard skins for each of the teams, restrict limit does not work
+	// Example: model" "4" - Hand Wraps
+	//           skin" "1" - Leather
+	"t_default_model" "4" // -3 - if you do not need to put any
+	"t_default_skin" "1" 
+	"ct_default_model" "5" // -3 - if you do not need to put any
+	"ct_default_skin" "4"
+	"Models"
+	{
+		"5027"
+		{
+			"name" "Bloodhound Gloves" // Displaying title
+			"icon"	"☠" // Icon, UTF-8 symbol
+			"skins"
+			{
+				"10006"
+				{
+					"name" "Charred"
+					"limit"	"-1" // 1 - Limit with plugin Vip R1ko if you have.  -1 - no restriction, 0 - restrict to non-vip, 1> - quality in percents (99 max, 100 == -1)
+				}
+				"10007"
+				{
+					"name" "Snakebite"
+					"limit"	"-1"
+				}
+				"10008"
+				{
+					"name" "Bronzed"
+					"limit"	"-1"
+				}
+				"10039"
+				{
+					"name" "Guerrilla"
+					"limit"	"-1"
+				}
+			}
+		}
+		"5030"
+		{
+			"name" "Sport Gloves"
+			"icon"	"★"
+			"skins"
+			{
+				"10018"
+				{
+					"name" "Superconductor"
+					"limit"	"-1"
+				}
+				"10019"
+				{
+					"name" "Arid"
+					"limit"	"-1"
+				}
+				"10037"
+				{
+					"name" "Pandora's Box"
+					"limit"	"-1"
+				}
+				"10038"
+				{
+					"name" "Hedge Maze"
+					"limit"	"-1"
+				}
+			}
+		}
+		"5031"
+		{
+			"name" "Driver Gloves"
+			"icon"	"☸"
+			"skins"
+			{
+				"10013"
+				{
+					"name" "Lunar Weave"
+					"limit"	"-1"
+				}
+				"10015"
+				{
+					"name" "Convoy"
+					"limit"	"-1"
+				}
+				"10016"
+				{
+					"name" "Crimson Weave"
+					"limit"	"-1"
+				}
+				"10040"
+				{
+					"name" "Diamondback"
+					"limit"	"-1"
+				}
+			}
+		}
+		"5032"
+		{
+			"name" "Hand Wraps"
+			"icon"	"☄"
+			"skins"
+			{
+				"10009"
+				{
+					"name" "Leather"
+					"limit"	"-1"
+				}
+				"10010"
+				{
+					"name" "Spruce DDPAT"
+					"limit"	"-1"
+				}
+				"10021"
+				{
+					"name" "Slaughter"
+					"limit"	"-1"
+				}
+				"10036"
+				{
+					"name" "Badlands"
+					"limit"	"-1"
+				}
+			}
+		}
+		"5033"
+		{
+			"name" "Moto Gloves"
+			"icon"	"☍"
+			"skins"
+			{
+				"10024"
+				{
+					"name" "Eclipse"
+					"limit"	"-1"
+				}
+				"10026"
+				{
+					"name" "Spearmint"
+					"limit"	"-1"
+				}
+				"10027"
+				{
+					"name" "Boom!"
+					"limit"	"-1"
+				}
+				"10028"
+				{
+					"name" "Cool Mint"
+					"limit"	"-1"
+				}
+			}
+		}
+		"5034"
+		{
+			"name" "Specialist Gloves"
+			"icon"	"✦"
+			"skins"
+			{
+				"10030"
+				{
+					"name" "Forest DDPAT"
+					"limit"	"-1"
+				}
+				"10033"
+				{
+					"name" "Crimson Kimono"
+					"limit"	"-1"
+				}
+				"10034"
+				{
+					"name" "Emerald Web"
+					"limit"	"-1"
+				}
+				"10035"
+				{
+					"name" "Foundation"
+					"limit"	"-1"
+				}
+			}
+		}
+	}
+}
