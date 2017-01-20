@@ -16,7 +16,7 @@
  */
 public Plugin myinfo = {
 	name = "AC Gloves", author = "Aircraft(diller110)",
-	description = "Set in-game gloves",	version = "1.5b", url = "thanks to Franc1sco && Pheonix"
+	description = "Set in-game gloves",	version = "1.5.1", url = "thanks to Franc1sco && Pheonix"
 };
 
 char tag1[16];
@@ -738,7 +738,7 @@ stock void SaveGlove(int client, int model = -1, int skin = -1, int quality = -1
 	}
 }
 stock void SetGlove(int client, int model = -1, int skin = -1, int wear = -1) {
-	int oldmodel, team = 0;
+	int team = 0;
 	//PrintToChat(client, "Input Model: %d Skin: %d Wear: %d", model, skin, wear);
 	//PrintToChat(client, "Data  Model: %d Skin: %d Wear: %d", glove_Type[client], glove_Skin[client], glove_Quality[client]);
 	if (!IsClientConnected(client) || !IsClientInGame(client) || IsFakeClient(client))
@@ -801,7 +801,6 @@ stock void SetGlove(int client, int model = -1, int skin = -1, int wear = -1) {
 	}
 	int current = GetEntPropEnt(client, Prop_Send, "m_hMyWearables");
 	if(current != -1 && IsWearable(current)) {
-		oldmodel = GetEntProp(current, Prop_Send, "m_iItemDefinitionIndex");
 		AcceptEntityInput(current, "Kill");
 		if (current == gloves[client]) gloves[client] = -1;
 		//PrintToChat(client, "%s Прошлые перчатки были удалены!", tag1);
@@ -809,21 +808,6 @@ stock void SetGlove(int client, int model = -1, int skin = -1, int wear = -1) {
 	if(gloves[client] != -1 && IsWearable(gloves[client])) {
 		AcceptEntityInput(gloves[client], "Kill");
 		gloves[client] = -1;
-	}
-	//PrintToChat(client, "oldmodel %d model %d modelindex %d", oldmodel, model, GetModelIndex(model));
-	if (oldmodel > 0 && model > 0 && oldmodel == GetModelIndex(model)) {
-		// Убирает мерцание рук, если модель перчаток не изменилась (сменился только скин)
-		// Важно: При таком подходе, похоже старый скин никуда не пропадает, просто его не видно за новым.
-		// Из-за этого мне удалось просадить фпс на 60 кадров сменив 100 раз скины одной модели.
-		// Но после респавна игрока, все восстанавливается, нужно сделать настройку по желанию.
-	} else {
-		int item = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
-		SetEntPropEnt(client, Prop_Send, "m_hActiveWeapon", -1); 
-		DataPack ph = new DataPack();
-		WritePackCell(ph, EntIndexToEntRef(client));
-		if(IsValidEntity(item))	WritePackCell(ph, EntIndexToEntRef(item));
-		else WritePackCell(ph, -1);
-		CreateTimer(0.0, AddItemTimer, ph, TIMER_FLAG_NO_MAPCHANGE);
 	}
 	if(model > 0 && skin > 0) {
 		int ent = CreateEntityByName("wearable_item");
@@ -845,7 +829,14 @@ stock void SetGlove(int client, int model = -1, int skin = -1, int wear = -1) {
 		}
 	} else {
 		SetEntProp(client, Prop_Send, "m_nBody", 0);
-	}	
+	}
+	int item = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");		
+	SetEntPropEnt(client, Prop_Send, "m_hActiveWeapon", -1); 		
+	DataPack ph = new DataPack();		
+	WritePackCell(ph, EntIndexToEntRef(client));		
+	if(IsValidEntity(item))	WritePackCell(ph, EntIndexToEntRef(item));		
+	else WritePackCell(ph, -1);		
+	CreateTimer(0.0, AddItemTimer, ph, TIMER_FLAG_NO_MAPCHANGE); 
 }
 public Action AddItemTimer(Handle timer, DataPack ph) {
     int client, item;
