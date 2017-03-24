@@ -16,8 +16,8 @@
 	}
 	"Menu_Standart"
 	{
-		"en"	"Default"
-		"ru"	"Стандартные"	
+		"en"	"Reset"
+		"ru"	"Сбросить"	
 		"tr"	"Default"
 		"fi"	"Oletus"
 	}
@@ -79,17 +79,17 @@
 	}
 	"Menu_Quality0"
 	{
-		"en"	"Junk \n "
-		"ru"	"Отработанное\n "
-		"tr"	"Hurda \n "
-		"fi"	"Romu \n "
+		"en"	"Junk"
+		"ru"	"Отработанное"
+		"tr"	"Hurda"
+		"fi"	"Romu"
 	}
 	"Menu_Random"
 	{
-		"en"	"Random\n "
-		"ru"	"Рандомный\n "
-		"tr"	"Rastgele\n "
-		"fi"	"Satunnainen\n "
+		"en"	"Random"
+		"ru"	"Рандомный"
+		"tr"	"Rastgele"
+		"fi"	"Satunnainen"
 	}
 	"RandomSet"
 	{
@@ -157,29 +157,50 @@
 	"Menu_NoTeamWarning"
 	{
 		"en"	"To select gloves, you should be in T or CT team!"
-		"tr"	"Eldiven Seçmek İçin T veya CT Takımına Girin!"
 		"ru"	"Чтобы выбирать перчатки, нужно находится в команде Т или КТ!"
+		"tr"	"Eldiven Seçmek İçin T veya CT Takımına Girin!"
 		"fi"	"Sinun pitäisi olla T tai CT joukuessa että voisit valita käsineet!"
 	}
 	"Menu_NoTeamTitle"
 	{
 		"en"	" \n \nTo select gloves \njoin T or CT team\n "
-		"tr"	" \n \nEldiven Secmek İcin \nOyunda T veya CT Takimina Girin\n "
 		"ru"	" \n \nЧтобы выбрать перчатки \nзайдите за Т или КТ\n "
+		"tr"	" \n \nEldiven Secmek İcin \nOyunda T veya CT Takimina Girin\n "
 		"fi"	" \n \nEttä voisit valita käsineet sinun pitäisi \nliittyä T tai CT joukkueeseen\n "
 	}
 	"Menu_Title_T" 
 	{
 		"en"	"Glove selection for T:"
-		"tr"	"T Eldivenleri:"
 		"ru"	"Выбор перчаток для Т:"
+		"tr"	"T Eldivenleri:"
 		"fi"	"Käsineiden valinta T:"
 	}
 	"Menu_Title_CT" 
 	{
 		"en"	"Glove selection for CT:"
-		"tr"	"CT Eldivenleri:"
 		"ru"	"Выбор перчаток для КТ:"
+		"tr"	"CT Eldivenleri:"
 		"fi"	"Käsineiden valinta CT:"
+	}
+	"Default_Any"
+	{
+		"en"	"Default by team"
+		"ru"	"Дефолтные по командам"
+		"tr"	"Default by team"
+		"fi"	"Default by team"
+	}
+	"Default_Vip"
+	{
+		"en"	"Default by vip"
+		"ru"	"Дефолтные по випу"
+		"tr"	"Default by team"
+		"fi"	"Default by team"
+	}
+	"Default_None"
+	{
+		"en"	"Standart gloves"
+		"ru"	"Стандартные перчатки"
+		"tr"	"Default by team"
+		"fi"	"Default by team"
 	}
 }
