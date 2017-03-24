@@ -86,7 +86,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 }
 public Action Event_PlayerTeam(Event event,char[] name,  bool dontBroadcast) { 
 	int client = GetClientOfUserId(event.GetInt("userid"));
-	if(ready && (event.GetInt("oldteam") == 0) && IsClientConnected(client) && IsClientInGame(client) && !IsFakeClient(client) && AreClientCookiesCached(client)) {
+	if(ready && !gh[client].IsValid && (event.GetInt("oldteam") == 0) && IsClientConnected(client) && IsClientInGame(client) && !IsFakeClient(client) && AreClientCookiesCached(client)) {
 		OnClientCookiesCached2(client);
 	}
 	return Plugin_Changed;
@@ -107,7 +107,6 @@ void OnClientCookiesCached2(int client, bool recreate = true) {
 		LogError("[GLOVES] Failed to create GloveHolder for client: %d", client);
 	} else {
 		gh[client].LoadFromCookie();
-		LogError("[GLOVES] GloveHolder for client %d created", client);
 	 	if(IsPlayerAlive(client)) {
 			if(gh[client].SetGlove()) {
 				PrintToChat(client, "%s %t", Tag, "Restored");
@@ -254,15 +253,15 @@ public int ModelMenuHandler(Menu menu, MenuAction action, int client, int item) 
 				} else {
 			 		switch(team) {
 			 			case 2: {
-			 				Format(title, MENU_TEXT, "%T", "Menu_Title_T", client);
+			 				Format(title, sizeof(title), "%T", "Menu_Title_T", client);
 			 			}
 			 			case 3: {
-			 				Format(title, MENU_TEXT, "%T", "Menu_Title_CT", client);
+			 				Format(title, sizeof(title), "%T", "Menu_Title_CT", client);
 			 			}
 			 		}
 		 		}
 		 	} else {
-		 		Format(title, MENU_TEXT, "%T", "Menu_Title", client);
+		 		Format(title, sizeof(title), "%T", "Menu_Title", client);
 		 	}
 		 	menu.SetTitle(title);
 		}
@@ -327,18 +326,15 @@ public int SkinMenuHandler(Menu menu, MenuAction action, int client, int item) {
 				int limit = GloveAccess(client, model, skin);
 				
 				if(limit == 0) {
-					//PrintToChatAll("%d %d %s for vip", model, skin, title);
 					if (title[strlen(title) - 2] == '\n') { // Убираем пробел в последнем пункте
 						title[strlen(title) - 2] = '\0';
 						Format(title, sizeof(title), "%s (VIP)\n ", title);
 					} else Format(title, sizeof(title), "%s (VIP)", title);
-					//return RedrawMenuItem(title);
 				} else if(limit > 0 && limit != 100) {
 					if (title[strlen(title) - 2] == '\n') { // Убираем пробел в последнем пункте
 						title[strlen(title) - 2] = '\0';
 						Format(title, sizeof(title), "%s (%d%%)\n ", title, limit);
 					} else Format(title, sizeof(title), "%s (%d%%)", title, limit);
-					//return RedrawMenuItem(title);
 				}
 				if(model == gh[client].GetGloveModel() && skin == gh[client].GetGloveSkin()) {
 					if (title[strlen(title) - 2] == '\n') { // Убираем пробел в последнем пункте
@@ -351,13 +347,15 @@ public int SkinMenuHandler(Menu menu, MenuAction action, int client, int item) {
 			} else {
 				switch(buff[1]){
 						case 'r':{
-							Format(title, 24, "%T\n ", "Menu_Random", client);
+							if(gh[client].GetGloveSkin() == -2) {
+								Format(title, sizeof(title), ">> %T <<\n ", "Menu_Random", client);
+							} else Format(title, sizeof(title), "%T\n ", "Menu_Random", client);
 						}
 						case 'b':{
-							Format(title, 24, "%T", "Menu_Back", client);
+							Format(title, sizeof(title), "%T", "Menu_Back", client);
 						}
 						case 'c':{
-							Format(title, 24, "%T", "Menu_Close", client);
+							Format(title, sizeof(title), "%T", "Menu_Close", client);
 						}
 				}
 				return RedrawMenuItem(title);
@@ -436,7 +434,7 @@ public int QualityMenuHandler(Menu menu, MenuAction action, int client, int item
 		}
 		case MenuAction_Display: {
 			char title[MENU_TEXT];
-			Format(title, MENU_TEXT, "%T:", "Menu_QualityTitle", client);
+			Format(title, sizeof(title), "%T:", "Menu_QualityTitle", client);
 		 	menu.SetTitle(title);
 		}
 	}
@@ -502,10 +500,10 @@ public int DefaultMenuHandler(Menu menu, MenuAction action, int client, int item
 			if(gg.IsValid) {
 				if(gg.VipDefaults) {
 					if(gg.VipLoaded && !gh[client].Vip) {
-						if (buff[0] == 'v')return ITEMDRAW_DISABLED;
+						if (buff[0] == 'v') return ITEMDRAW_DISABLED;
 					}
 				} else {
-					if (buff[0] == 'v')return ITEMDRAW_RAWLINE;
+					if (buff[0] == 'v') return ITEMDRAW_RAWLINE;
 				}
 			}
 		}
@@ -528,8 +526,8 @@ public void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast
 		}
 		int wear = GetEntPropEnt(client, Prop_Send, "m_hMyWearables");
 		if(wear == -1) {
-			if(gh[client].IsValid) gh[client].SetGlove();
-			//CreateTimer(0.0, FakeTimer, client-100);
+			//if(gh[client].IsValid) gh[client].SetGlove();
+			CreateTimer(0.0, FakeTimer, client-100);
 		} else {
 			if(gg.ThirdPerson) SetEntProp(client, Prop_Send, "m_nBody", 1);
 		}
@@ -537,7 +535,7 @@ public void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast
 }
 public Action FakeTimer(Handle timer, int client) {
 	if(client < 0) CreateTimer(0.0, FakeTimer, client+100);
-	else gh[client].SetGlove();
+	else if(gh[client].IsValid) gh[client].SetGlove();
 	return Plugin_Stop;
 }
 public Action Cmd_ModelsMenu(int client, int args) {
