@@ -18,6 +18,7 @@ Menu ModelMenu, QualityMenu, DefaultMenu;
 bool ready = false;
 
 public void OnPluginStart() {
+	PrintDebug("!!! OnPluginStart");
 	LoadTranslations("ac_gloves.phrases.txt");
 	
 	StartLoading();
@@ -44,21 +45,25 @@ void StartLoading() {
 		ready = true;
 		CreateMenus();
 		
-		for(int i = 1; i <= MaxClients; i++)
-			if(IsClientConnected(i) && IsClientInGame(i) && !IsFakeClient(i) && AreClientCookiesCached(i))
+		for (int i = 1; i <= MAXPLAYERS; i++) {
+			gh[i] = GloveHolder();
+			if(i<=MaxClients && IsClientConnected(i) && IsClientInGame(i) && !IsFakeClient(i) && AreClientCookiesCached(i))
 				OnClientCookiesCached2(i);
+		}
 	} else {
 		LogError("[GLOVES] Failed to create GlovesGlobal's Dynamic object. (gg.IsValid == false)");
 	}
 }
 public void OnPluginEnd() {
+	PrintDebug("!!! OnPluginEnd");
 	if(ready) {
 		for(int i = 0; i <= MAXPLAYERS; i++) {
-			if(gh[i].IsValid) {
+			if(gh[i].IsValid && gh[i].Client != -1) {
 				gh[i].GloveEntity = -1;
-				PrintDebug("Dispose GloveHolder[%d]", i);
-				gh[i].Dispose();
-				gh[i] = view_as<GloveHolder>(INVALID_DYNAMIC_OBJECT);
+				gh[i].ClearData();
+				PrintDebug("Clear GloveHolder[%d]", i);
+				//gh[i].Dispose();
+				//gh[i] = view_as<GloveHolder>(INVALID_DYNAMIC_OBJECT);
 			}
 		}
 		if(gg.IsValid) {
@@ -97,10 +102,20 @@ void OnClientCookiesCached2(int client, bool recreate = true) {
 	
 	if(gh[client].IsValid) {
 		gh[client].GloveEntity = -1;
-		gh[client].Dispose();
+		gh[client].ClearData();
+		gh[client].Client = client;
+		gh[client].Vip = (gg.VipLoaded) ? VIP_IsClientVIP(client):true;
+		gh[client].LoadFromCookie();
+	 	if(IsPlayerAlive(client)) {
+			if(gh[client].SetGlove()) {
+				PrintToChat(client, "%s %t", Tag, "Restored");
+			}
+		}
+		//gh[client].Dispose();
 	}
-	gh[client] = GloveHolder(client, (gg.VipLoaded)?VIP_IsClientVIP(client):true);
-	if (!gh[client].IsValid) {
+	//gh[client] = GloveHolder(client, (gg.VipLoaded)?VIP_IsClientVIP(client):true);
+	
+	/*if (!gh[client].IsValid) {
 		if(recreate && IsClientConnected(client) && !IsFakeClient(client)) {
 			CreateTimer(3.0, Timer_ReCreateHolder, client);
 		}
@@ -112,7 +127,7 @@ void OnClientCookiesCached2(int client, bool recreate = true) {
 				PrintToChat(client, "%s %t", Tag, "Restored");
 			}
 		}
-	}
+	}*/
 }
 public Action Timer_ReCreateHolder(Handle timer, int client) {
 	if(!gh[client].IsValid && IsClientConnected(client) && IsClientInGame(client)) {
@@ -121,9 +136,11 @@ public Action Timer_ReCreateHolder(Handle timer, int client) {
 	return Plugin_Handled;
 }
 public void OnClientDisconnect(int client) {
+	PrintDebug("!!! OnClientDisconnect");
 	if(ready && gh[client].IsValid) {
 		gh[client].GloveEntity = -1;
-		gh[client].Dispose();
+		gh[client].ClearData();
+		//gh[client].Dispose();
 	}
 }
 public void CreateMenus() {
@@ -269,8 +286,10 @@ public int ModelMenuHandler(Menu menu, MenuAction action, int client, int item) 
 	return 0;
 }
 public int SkinMenuHandler(Menu menu, MenuAction action, int client, int item) {
+
 	switch(action) {
 		case MenuAction_Select: {
+			if (!gh[client].IsValid)return 0;
 			char buff[16];
 			menu.GetItem(item, buff, sizeof(buff));
 			if(gg.IsValid && gg.TeamDivided && (buff[1] != 'q' || buff[1] != 'c')) {
