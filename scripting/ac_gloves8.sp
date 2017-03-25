@@ -17,7 +17,6 @@ Menu ModelMenu, QualityMenu, DefaultMenu;
 bool ready = false;
 
 public void OnPluginStart() {
-	PrintDebug("!!! OnPluginStart");
 	LoadTranslations("ac_gloves.phrases.txt");
 	
 	StartLoading();
@@ -53,7 +52,6 @@ void StartLoading() {
 	}
 }
 public void OnPluginEnd() {
-	PrintDebug("!!! OnPluginEnd");
 	if(ready) {
 		if(gg.IsValid) {
 			gg.Dispose();
