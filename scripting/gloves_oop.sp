@@ -4,20 +4,17 @@
 #undef REQUIRE_PLUGIN
 #include <vip_core>
 #define REQUIRE_PLUGIN
-#define DEBUG 3
-#if DEBUG
+
 public void PrintDebug(const char[] msg, any ...) {
 	int len = strlen(msg) + 255;
 	char[] formatted = new char[len];
 	VFormat(formatted, len, msg, 2);
 	PrintToServer("[GLOVES] DEBUG: %s", formatted);
 }
-#endif
 
 /* Для быстрого доступа, получать строку через буфер не вариант*/
-stock char Tag[] = "[\x11GL\x01]";
+stock char Tag[16] = "[\x11GL\x01]";
 stock int Clr;
-
 /**
  * Главный объект хранящий параметры поведения объектов GloveStorage, GloveHandler
  */
@@ -520,16 +517,18 @@ stock GloveStorage gs;
  * Объект хранящий данные игрока
  */
 methodmap GloveHolder < Dynamic {
-	public GloveHolder(int client, bool vip) {
-		if(!IsClientConnected(client) || IsFakeClient(client)){
+	public GloveHolder() {
+		/*if(!IsClientConnected(client) || IsFakeClient(client)){
 			return view_as<GloveHolder>(INVALID_DYNAMIC_OBJECT);
-		}
+		}*/
 		Dynamic gh1 = Dynamic();
 		/*Забиваем дефолтными значениями*/
 		/*Клиент-держатель перчаток*/
-		gh1.SetInt("Client", client);
+		//gh1.SetInt("Client", client);
+		gh1.SetInt("Client", -1);
 		/*Наличие привилегий у держателя*/
-		gh1.SetBool("Vip", vip);
+		//gh1.SetBool("Vip", vip);
+		gh1.SetBool("Vip", true);
 		gh1.SetInt("Glove", -1);
 		gh1.SetInt("ModelCT", -3);
 		gh1.SetInt("ModelT", -3);
@@ -540,16 +539,19 @@ methodmap GloveHolder < Dynamic {
 	}
 	property int Client	{
 		public get() {
-			return this.GetInt("Client");
+			return this.GetInt("Client", -1);
 		}
-		/*Изменить нельзя, иначе потеряем остальные данные*/
+		public set(int val) {
+			PrintDebug("Rewrite GloveHolder's Client parametr from %d to %d", this.GetInt("Client", -1), val);
+			this.SetInt("Client", val);
+		}
 	}
 	property bool Vip {
 		public get() {
 			return this.GetBool("Vip");
 		}
-		public set(bool vip) {
-			this.SetBool("Vip", vip);
+		public set(bool val) {
+			this.SetBool("Vip", val);
 		}
 	}
 	/**
@@ -988,9 +990,17 @@ methodmap GloveHolder < Dynamic {
 		}
 		return false;
 	}
-	
+	public void ClearData(int client = -1, bool vip = true) {
+		this.SetInt("Client", client);
+		this.SetBool("Vip", vip);
+		this.SetInt("Glove", -1);
+		this.SetInt("ModelCT", -3);
+		this.SetInt("ModelT", -3);
+		this.SetInt("SkinCT", -3);
+		this.SetInt("SkinT", -3);
+		this.SetInt("Quality", 100);
+	}
 }
-
 stock void DumpDefaults(GloveStorage obj) {
 	PrintToServer("[GLOVES] DumpDefaults started.");
 	if(obj.IsValid) {

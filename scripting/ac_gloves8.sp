@@ -6,14 +6,13 @@
 
 #define MENU_TEXT 50
 #define MENUACTIONS MenuAction_Display|MenuAction_DisplayItem|MenuAction_DrawItem
-
+#define DCLIENT(%1) view_as<GloveHolder>(Dynamic.GetPlayerSettings(%1))
 
 public Plugin myinfo = {
 	name = "AC Gloves", author = "Aircraft(diller110)",
 	description = "Set in-game gloves",	version = "1.6 beta1", url = "thanks to Franc1sco && Pheonix"
 };
 
-GloveHolder gh[MAXPLAYERS + 1] = {view_as<GloveHolder>(INVALID_DYNAMIC_OBJECT), ...};
 Menu ModelMenu, QualityMenu, DefaultMenu;
 bool ready = false;
 
@@ -45,9 +44,8 @@ void StartLoading() {
 		ready = true;
 		CreateMenus();
 		
-		for (int i = 1; i <= MAXPLAYERS; i++) {
-			gh[i] = GloveHolder();
-			if(i<=MaxClients && IsClientConnected(i) && IsClientInGame(i) && !IsFakeClient(i) && AreClientCookiesCached(i))
+		for (int i = 1; i < MAXPLAYERS; i++) {
+			if(IsClientConnected(i) && IsClientInGame(i) && !IsFakeClient(i) && AreClientCookiesCached(i))
 				OnClientCookiesCached2(i);
 		}
 	} else {
@@ -57,15 +55,6 @@ void StartLoading() {
 public void OnPluginEnd() {
 	PrintDebug("!!! OnPluginEnd");
 	if(ready) {
-		for(int i = 0; i <= MAXPLAYERS; i++) {
-			if(gh[i].IsValid && gh[i].Client != -1) {
-				gh[i].GloveEntity = -1;
-				gh[i].ClearData();
-				PrintDebug("Clear GloveHolder[%d]", i);
-				//gh[i].Dispose();
-				//gh[i] = view_as<GloveHolder>(INVALID_DYNAMIC_OBJECT);
-			}
-		}
 		if(gg.IsValid) {
 			gg.Dispose();
 			gg = view_as<GloveGlobal>(INVALID_DYNAMIC_OBJECT);
@@ -89,9 +78,13 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	MarkNativeAsOptional("VIP_IsClientVIP");
 	return APLRes_Success;
 }
+public void OnClientConnected(int client) {
+	GloveHolder gh = DCLIENT(client);
+	gh.ClearData(client);
+}
 public Action Event_PlayerTeam(Event event,char[] name,  bool dontBroadcast) { 
 	int client = GetClientOfUserId(event.GetInt("userid"));
-	if(ready && !gh[client].IsValid && (event.GetInt("oldteam") == 0) && IsClientConnected(client) && IsClientInGame(client) && !IsFakeClient(client) && AreClientCookiesCached(client)) {
+	if(ready && (event.GetInt("oldteam") == 0) && IsClientConnected(client) && IsClientInGame(client) && !IsFakeClient(client) && AreClientCookiesCached(client)) {
 		OnClientCookiesCached2(client);
 	}
 	return Plugin_Changed;
@@ -100,14 +93,12 @@ void OnClientCookiesCached2(int client, bool recreate = true) {
 	if (!ready || !gg.IsValid) return;
 	if (client < 1 && !IsClientConnected(client)) return;
 	
-	if(gh[client].IsValid) {
-		gh[client].GloveEntity = -1;
-		gh[client].ClearData();
-		gh[client].Client = client;
-		gh[client].Vip = (gg.VipLoaded) ? VIP_IsClientVIP(client):true;
-		gh[client].LoadFromCookie();
+	GloveHolder gh = DCLIENT(client);
+	if(gh.IsValid) {
+		gh.ClearData(client, (gg.VipLoaded) ? VIP_IsClientVIP(client):true);
+		gh.LoadFromCookie();
 	 	if(IsPlayerAlive(client)) {
-			if(gh[client].SetGlove()) {
+			if(gh.SetGlove()) {
 				PrintToChat(client, "%s %t", Tag, "Restored");
 			}
 		}
@@ -129,20 +120,21 @@ void OnClientCookiesCached2(int client, bool recreate = true) {
 		}
 	}*/
 }
+/*
 public Action Timer_ReCreateHolder(Handle timer, int client) {
 	if(!gh[client].IsValid && IsClientConnected(client) && IsClientInGame(client)) {
 		OnClientCookiesCached2(client, false);
 	}
 	return Plugin_Handled;
-}
-public void OnClientDisconnect(int client) {
+}*/
+/*public void OnClientDisconnect(int client) {
 	PrintDebug("!!! OnClientDisconnect");
 	if(ready && gh[client].IsValid) {
 		gh[client].GloveEntity = -1;
 		gh[client].ClearData();
 		//gh[client].Dispose();
 	}
-}
+}*/
 public void CreateMenus() {
 	char buff[3][MENU_TEXT];
 	
@@ -242,7 +234,8 @@ public int ModelMenuHandler(Menu menu, MenuAction action, int client, int item) 
 				}
 				return RedrawMenuItem(display);
 			} else {
-				if(StringToInt(buff) == gh[client].GetGloveModel()) {
+				GloveHolder gh = DCLIENT(client);
+				if(StringToInt(buff) == gh.GetGloveModel()) {
 					Format(display, sizeof(display), ">> %s <<", display);
 					return RedrawMenuItem(display);
 				}
@@ -289,7 +282,8 @@ public int SkinMenuHandler(Menu menu, MenuAction action, int client, int item) {
 
 	switch(action) {
 		case MenuAction_Select: {
-			if (!gh[client].IsValid)return 0;
+			GloveHolder gh = DCLIENT(client);
+			if (!gh.IsValid)return 0;
 			char buff[16];
 			menu.GetItem(item, buff, sizeof(buff));
 			if(gg.IsValid && gg.TeamDivided && (buff[1] != 'q' || buff[1] != 'c')) {
@@ -302,8 +296,8 @@ public int SkinMenuHandler(Menu menu, MenuAction action, int client, int item) {
 			}
 			if(buff[0] == '_') { // Управляющие пункты
 				if(buff[1] == 'r') {
-					gh[client].SaveGlove(StringToInt(buff[3]), -2)
-					gh[client].SetGlove();
+					gh.SaveGlove(StringToInt(buff[3]), -2)
+					gh.SetGlove();
 					menu.Display(client, 40);
 				} else if(buff[1] == 'b') {
 					ModelMenu.Display(client, 40);
@@ -314,8 +308,8 @@ public int SkinMenuHandler(Menu menu, MenuAction action, int client, int item) {
 			} else { // Выбраны перчатки
 				char buffs[2][8];
 				ExplodeString(buff, ":", buffs, 2, 8);
-				gh[client].SaveGlove(StringToInt(buffs[0]), StringToInt(buffs[1]), _, true);
-				gh[client].SetGlove();
+				gh.SaveGlove(StringToInt(buffs[0]), StringToInt(buffs[1]), _, true);
+				gh.SetGlove();
 				menu.Display(client, 40);
 			}
 		}
@@ -355,7 +349,8 @@ public int SkinMenuHandler(Menu menu, MenuAction action, int client, int item) {
 						Format(title, sizeof(title), "%s (%d%%)\n ", title, limit);
 					} else Format(title, sizeof(title), "%s (%d%%)", title, limit);
 				}
-				if(model == gh[client].GetGloveModel() && skin == gh[client].GetGloveSkin()) {
+				GloveHolder gh = DCLIENT(client);
+				if(model == gh.GetGloveModel() && skin == gh.GetGloveSkin()) {
 					if (title[strlen(title) - 2] == '\n') { // Убираем пробел в последнем пункте
 						title[strlen(title) - 2] = '\0';
 						Format(title, sizeof(title), ">> %s <<\n ", title, limit);
@@ -366,7 +361,7 @@ public int SkinMenuHandler(Menu menu, MenuAction action, int client, int item) {
 			} else {
 				switch(buff[1]){
 						case 'r':{
-							if(gh[client].GetGloveSkin() == -2) {
+							if(DCLIENT(client).GetGloveSkin() == -2) {
 								Format(title, sizeof(title), ">> %T <<\n ", "Menu_Random", client);
 							} else Format(title, sizeof(title), "%T\n ", "Menu_Random", client);
 						}
@@ -401,8 +396,9 @@ public int QualityMenuHandler(Menu menu, MenuAction action, int client, int item
 	switch(action) {
 		case MenuAction_Select: {
 			if(item<5) {
-				gh[client].SaveGlove(_, _, 100-25*item);
-				gh[client].SetGlove();
+				GloveHolder gh = DCLIENT(client);
+				gh.SaveGlove(_, _, 100-25*item);
+				gh.SetGlove();
 				menu.Display(client, 20);
 			} else {
 				char buff[8];
@@ -426,26 +422,27 @@ public int QualityMenuHandler(Menu menu, MenuAction action, int client, int item
 				}
 			} else {
 				int num = StringToInt(buff);
+				GloveHolder gh = DCLIENT(client);
 				switch(num) {
 					case 0: {	
-						if(num==gh[client].GloveQuality) Format(display, sizeof(display), ">> %T <<\n ", "Menu_Quality0", client, display);
+						if(num==gh.GloveQuality) Format(display, sizeof(display), ">> %T <<\n ", "Menu_Quality0", client, display);
 						else Format(display, sizeof(display), "%T\n ", "Menu_Quality0", client);
 					}
 					case 25: {
 						Format(display, sizeof(display), "%T", "Menu_Quality25", client);
-						if(num==gh[client].GloveQuality) Format(display, sizeof(display), ">> %s <<", display);
+						if(num==gh.GloveQuality) Format(display, sizeof(display), ">> %s <<", display);
 					}
 					case 50: {
 						Format(display, sizeof(display), "%T", "Menu_Quality50", client);
-						if(num==gh[client].GloveQuality) Format(display, sizeof(display), ">> %s <<", display);
+						if(num==gh.GloveQuality) Format(display, sizeof(display), ">> %s <<", display);
 					}
 					case 75: {
 						Format(display, sizeof(display), "%T", "Menu_Quality75", client);
-						if(num==gh[client].GloveQuality) Format(display, sizeof(display), ">> %s <<", display);
+						if(num==gh.GloveQuality) Format(display, sizeof(display), ">> %s <<", display);
 					}
 					case 100: {
 						Format(display, sizeof(display), "%T", "Menu_Quality100", client);
-						if(num==gh[client].GloveQuality) Format(display, sizeof(display), ">> %s <<", display);
+						if(num==gh.GloveQuality) Format(display, sizeof(display), ">> %s <<", display);
 					}
 				}
 			}
@@ -471,18 +468,19 @@ public int DefaultMenuHandler(Menu menu, MenuAction action, int client, int item
 					case 'c': {	}
 				}
 			} else {
+				GloveHolder gh = DCLIENT(client);
 				switch(buff[0]) {
 					case 'a': {
-						gh[client].ResetGlove(_, _, "Any");
+						gh.ResetGlove(_, _, "Any");
 					}
 					case 'v': {
-						gh[client].ResetGlove();
+						gh.ResetGlove();
 					}
 					case 'n': {
-						gh[client].ResetGlove(true);
+						gh.ResetGlove(true);
 					}
 				}
-				gh[client].SetGlove();
+				gh.SetGlove();
 				menu.Display(client, 30);
 			}
 		}
@@ -518,7 +516,7 @@ public int DefaultMenuHandler(Menu menu, MenuAction action, int client, int item
 			menu.GetItem(item, buff, sizeof(buff));
 			if(gg.IsValid) {
 				if(gg.VipDefaults) {
-					if(gg.VipLoaded && !gh[client].Vip) {
+					if(gg.VipLoaded && !DCLIENT(client).Vip) {
 						if (buff[0] == 'v') return ITEMDRAW_DISABLED;
 					}
 				} else {
@@ -554,7 +552,7 @@ public void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast
 }
 public Action FakeTimer(Handle timer, int client) {
 	if(client < 0) CreateTimer(0.0, FakeTimer, client+100);
-	else if(gh[client].IsValid) gh[client].SetGlove();
+	else if(DCLIENT(client).IsValid) DCLIENT(client).SetGlove();
 	return Plugin_Stop;
 }
 public Action Cmd_ModelsMenu(int client, int args) {
