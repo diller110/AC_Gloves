@@ -89,7 +89,7 @@ public Action Event_PlayerTeam(Event event,char[] name,  bool dontBroadcast) {
 	}
 	return Plugin_Changed;
 }
-void OnClientCookiesCached2(int client, bool recreate = true) {
+void OnClientCookiesCached2(int client) {
 	if (!ready || !gg.IsValid) return;
 	if (client < 1 && !IsClientConnected(client)) return;
 	
@@ -102,39 +102,8 @@ void OnClientCookiesCached2(int client, bool recreate = true) {
 				PrintToChat(client, "%s %t", Tag, "Restored");
 			}
 		}
-		//gh[client].Dispose();
 	}
-	//gh[client] = GloveHolder(client, (gg.VipLoaded)?VIP_IsClientVIP(client):true);
-	
-	/*if (!gh[client].IsValid) {
-		if(recreate && IsClientConnected(client) && !IsFakeClient(client)) {
-			CreateTimer(3.0, Timer_ReCreateHolder, client);
-		}
-		LogError("[GLOVES] Failed to create GloveHolder for client: %d", client);
-	} else {
-		gh[client].LoadFromCookie();
-	 	if(IsPlayerAlive(client)) {
-			if(gh[client].SetGlove()) {
-				PrintToChat(client, "%s %t", Tag, "Restored");
-			}
-		}
-	}*/
 }
-/*
-public Action Timer_ReCreateHolder(Handle timer, int client) {
-	if(!gh[client].IsValid && IsClientConnected(client) && IsClientInGame(client)) {
-		OnClientCookiesCached2(client, false);
-	}
-	return Plugin_Handled;
-}*/
-/*public void OnClientDisconnect(int client) {
-	PrintDebug("!!! OnClientDisconnect");
-	if(ready && gh[client].IsValid) {
-		gh[client].GloveEntity = -1;
-		gh[client].ClearData();
-		//gh[client].Dispose();
-	}
-}*/
 public void CreateMenus() {
 	char buff[3][MENU_TEXT];
 	
@@ -182,7 +151,7 @@ public void CreateMenus() {
 public int ModelMenuHandler(Menu menu, MenuAction action, int client, int item) {
 	switch(action) {
 		case MenuAction_Select: {
-			char buff[12], buff2[MENU_TEXT]; //, buff3[MENU_TEXT];
+			char buff[12], buff2[MENU_TEXT];
 			menu.GetItem(item, buff, sizeof(buff));
 			if(buff[0] == '_') { // Управляющие пункты
 				switch(buff[1]) {
@@ -329,7 +298,6 @@ public int SkinMenuHandler(Menu menu, MenuAction action, int client, int item) {
 		}
 		case MenuAction_DisplayItem: {
 			char buff[16], title[MENU_TEXT]
-			//menu.GetItem(item, buff, sizeof(buff));
 			menu.GetItem(item, buff, sizeof(buff), _, title, sizeof(title));
 			if(buff[0] != '_') {
 				static char buffs[2][8];
@@ -543,7 +511,6 @@ public void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast
 		}
 		int wear = GetEntPropEnt(client, Prop_Send, "m_hMyWearables");
 		if(wear == -1) {
-			//if(gh[client].IsValid) gh[client].SetGlove();
 			CreateTimer(0.0, FakeTimer, client-100);
 		} else {
 			if(gg.ThirdPerson) SetEntProp(client, Prop_Send, "m_nBody", 1);
