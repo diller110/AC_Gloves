@@ -100,11 +100,19 @@ methodmap GloveGlobal < Dynamic {
 	}
 	property int Color {
 		public get() {
-			return this.GetInt("Color", true);
+			return this.GetInt("Color", 1);
 		}
 		public set(int val) {
 			if (val < 1 || val > 16) val = 11;
 			this.SetInt("Color", val);
+		}
+	}
+	property bool SetGloveDelay {
+		public get() {
+			return this.GetBool("SetGloveDelay", false);
+		}
+		public set(bool val) {
+			this.SetBool("SetGloveDelay", val);
 		}
 	}
 	property Handle ModelCookieCT {
@@ -186,6 +194,7 @@ methodmap GloveGlobal < Dynamic {
 			this.TeamDivided = view_as<bool>(kv.GetNum("team_divided", 1));
 			this.SkipCustomArms = view_as<bool>(kv.GetNum("skip_custom_arms", 0));
 			this.ThirdPerson = view_as<bool>(kv.GetNum("show_thirdperson", 1));
+			this.SetGloveDelay = view_as<bool>(kv.GetNum("set_glove_delay", 0));
 			this.Random = view_as<bool>(kv.GetNum("random", 1));
 			char tag1[16];
 			kv.GetString("tag", tag1, sizeof(tag1), "GL");
@@ -796,7 +805,7 @@ methodmap GloveHolder < Dynamic {
 				int tempmodel = -3;
 				int tempskin = -3;
 				char group[16] = "";
-				if(gg.GetBool("VipLoaded") && VIP_IsClientVIP(this.Client)) {
+				if(gg.VipLoaded && VIP_IsClientVIP(this.Client)) {
 					VIP_GetClientVIPGroup(this.Client, group, sizeof(group));
 				}
 				if(StrEqual(forcegroup, "")) {

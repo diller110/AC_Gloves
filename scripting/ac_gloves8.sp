@@ -74,6 +74,7 @@ public void OnLibraryAdded(const char[] name) {
 }
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
 	MarkNativeAsOptional("VIP_IsClientVIP");
+	MarkNativeAsOptional("VIP_GetClientVIPGroup");
 	return APLRes_Success;
 }
 public void OnClientConnected(int client) {
@@ -509,7 +510,8 @@ public void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast
 		}
 		int wear = GetEntPropEnt(client, Prop_Send, "m_hMyWearables");
 		if(wear == -1) {
-			CreateTimer(0.0, FakeTimer, client-100);
+			if(gg.SetGloveDelay) CreateTimer(0.0, FakeTimer, client-100);
+			else if(DCLIENT(client).IsValid) DCLIENT(client).SetGlove();
 		} else {
 			if(gg.ThirdPerson) SetEntProp(client, Prop_Send, "m_nBody", 1);
 		}
