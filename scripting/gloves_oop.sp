@@ -1,9 +1,11 @@
+#undef REQUIRE_PLUGIN
+#include <vip_core>
+#include <vip>
+#define REQUIRE_PLUGIN
+#pragma newdecls required
 #include <dynamic>
 #include <sdktools>
 #include <clientprefs>
-#undef REQUIRE_PLUGIN
-#include <vip_core>
-#define REQUIRE_PLUGIN
 
 public void PrintDebug(const char[] msg, any ...) {
 	int len = strlen(msg) + 255;
@@ -38,24 +40,20 @@ methodmap GloveGlobal < Dynamic {
 		}
 		return view_as<GloveGlobal>(INVALID_DYNAMIC_OBJECT);
 	}
-	/**
-     * bool TeamDivided <get/set>
-	 * Учитывать команды при выдаче перчаток или нет
-	*/
-	property bool TeamDivided {
-		public get() {
-			return this.GetBool("TeamDivided", true);
-		}
-		public set(bool val) {
-			this.SetBool("TeamDivided", val);
-		}
-	}
 	property bool VipLoaded {
 		public get() {
 			return this.GetBool("VipLoaded", false);
 		}
 		public set(bool val) {
 			this.SetBool("VipLoaded", val);
+		}
+	}
+	property bool TeamDivided {
+		public get() {
+			return this.GetBool("TeamDivided", true);
+		}
+		public set(bool val) {
+			this.SetBool("TeamDivided", val);
 		}
 	}
 	property bool SkipCustomArms {
@@ -140,52 +138,6 @@ methodmap GloveGlobal < Dynamic {
 			return this.GetHandle("QualityCookie");
 		}
 	}
-	public Handle ModelCookie(int team = -1) {
-		if(team != -1) {
-			if(team == 2) {
-				return this.ModelCookieT;
-			} else {
-				return this.ModelCookieCT;
-			}
-		} else {
-			if(!this.TeamDivided) {
-				return this.ModelCookieCT;
-			} else {
-				switch(team) {
-					case 2: {
-						return this.ModelCookieT;
-					}
-					default: {
-						return this.ModelCookieCT;
-					}
-				}
-			}
-		}
-		return this.ModelCookieCT;
-	}
-	public Handle SkinCookie(int team = -1) {
-		if(team != -1) {
-			if(team == 2) {
-				return this.SkinCookieT;
-			} else {
-				return this.SkinCookieCT;
-			}
-		} else {
-			if(!this.TeamDivided) {
-				return this.SkinCookieCT;
-			} else {
-				switch(team) {
-					case 2: {
-						return this.SkinCookieT;
-					}
-					default: {
-						return this.SkinCookieCT;
-					}
-				}
-			}
-		}
-		return this.SkinCookieCT;
-	}
 	public bool LoadFromFile(char[] path) {
 		bool success = false;
 		KeyValues kv = new KeyValues("Gloves");
@@ -227,12 +179,8 @@ methodmap GloveStorage < Dynamic {
 			this.SetDynamic("Defaults", val);
 		}
 	}
-	
 	public int ModelsCount() {
-		if(this.Defaults != INVALID_DYNAMIC_OBJECT) {
-			return this.MemberCount-1;
-		}
-		return this.MemberCount;
+		return (this.Defaults != INVALID_DYNAMIC_OBJECT) ? this.MemberCount - 1:this.MemberCount;
 	}
 	public bool AddModel(int model, char[] name, char[] icon) {
 		if(model>0) {
@@ -381,24 +329,12 @@ methodmap GloveStorage < Dynamic {
 			gd = this.Defaults.GetDynamic("Any");
 		} else {
 			gd = this.Defaults.GetDynamic(group);
-			if(!gd.IsValid) {
-				gd = this.GetDynamic("Any");
-			}
+			if(!gd.IsValid) gd = this.GetDynamic("Any");
 		}
 		if(gd.IsValid) {
-			if(gg.TeamDivided) {
-				if(team == -1) {
-					return gd.GetInt("CTModel", -3);
-				} else {
-					if(team == 2) {
-						return gd.GetInt("TModel", -3);
-					} else {
-						return gd.GetInt("CTModel", -3);
-					}
-				}
-			} else {
-				return gd.GetInt("CTModel", -3);
-			}
+			if(gg.TeamDivided && team == 2)
+				return gd.GetInt("TModel", -3);
+			return gd.GetInt("CTModel", -3);
 		}
 		return -3; // Ничего не нашли, значит не ставить ничего.
 	}
@@ -408,24 +344,12 @@ methodmap GloveStorage < Dynamic {
 			gd = this.Defaults.GetDynamic("Any");
 		} else {
 			gd = this.Defaults.GetDynamic(group);
-			if(!gd.IsValid) {
-				gd = this.Defaults.GetDynamic("Any");
-			}
+			if(!gd.IsValid)	gd = this.Defaults.GetDynamic("Any");
 		}
 		if(gd.IsValid) {
-			if(gg.TeamDivided) {
-				if(team == -1) {
-					return gd.GetInt("CTSkin", -3);
-				} else {
-					if(team == 2) {
-						return gd.GetInt("TSkin", -3);
-					} else {
-						return gd.GetInt("CTSkin", -3);
-					}
-				}
-			} else {
-				return gd.GetInt("CTSkin", -3);
-			}
+			if(gg.TeamDivided && team == 2)
+				return gd.GetInt("TSkin", -3);
+			return gd.GetInt("CTSkin", -3);
 		}
 		return -3; // Ничего не нашли, значит не ставить ничего.
 	}
@@ -526,25 +450,15 @@ stock GloveStorage gs;
  * Объект хранящий данные игрока
  */
 methodmap GloveHolder < Dynamic {
-	public GloveHolder() {
-		/*if(!IsClientConnected(client) || IsFakeClient(client)){
-			return view_as<GloveHolder>(INVALID_DYNAMIC_OBJECT);
-		}*/
-		Dynamic gh1 = Dynamic();
-		/*Забиваем дефолтными значениями*/
-		/*Клиент-держатель перчаток*/
-		//gh1.SetInt("Client", client);
-		gh1.SetInt("Client", -1);
-		/*Наличие привилегий у держателя*/
-		//gh1.SetBool("Vip", vip);
-		gh1.SetBool("Vip", true);
-		gh1.SetInt("Glove", -1);
-		gh1.SetInt("ModelCT", -3);
-		gh1.SetInt("ModelT", -3);
-		gh1.SetInt("SkinCT", -3);
-		gh1.SetInt("SkinT", -3);
-		gh1.SetInt("Quality", 100);
-		return view_as<GloveHolder>(gh1);
+	public void Initialize(int client = -1, bool vip = true) {
+		this.SetInt("Client", client);
+		this.SetBool("Vip", vip);
+		this.SetInt("Glove", -1);
+		this.SetInt("ModelCT", -3);
+		this.SetInt("ModelT", -3);
+		this.SetInt("SkinCT", -3);
+		this.SetInt("SkinT", -3);
+		this.SetInt("Quality", 100);
 	}
 	property int Client	{
 		public get() {
@@ -960,54 +874,47 @@ methodmap GloveHolder < Dynamic {
 	}
 	public bool LoadFromCookie() {
 		if (gg.IsValid) {
+			if(this.Client<1 || !IsClientConnected(this.Client)) {
+				LogError("[GLOVES] Can't load invalid player %d.", this.Client);
+			}
 			char buff[12];
-			int type[2], skin[2], quality;
+			int type, skin, quality;
 		
 			GetClientCookie(this.Client, gg.ModelCookieCT, buff, sizeof(buff));
-			type[0] = StringToInt(buff);
+			type = StringToInt(buff);
 			GetClientCookie(this.Client, gg.SkinCookieCT, buff, sizeof(buff));
-			skin[0] = StringToInt(buff);
+			skin = StringToInt(buff);
 			GetClientCookie(this.Client, gg.QualityCookie, buff, sizeof(buff));
 			quality = StringToInt(buff);
 			
-			if(quality<0 || quality >100) this.GloveQuality = 100;
-			else this.GloveQuality = quality;
+			if(quality<0 || quality >100) quality = 100;
+			this.GloveQuality = quality;
 			
-			if(skin[0] == 0) { // куки ни разу не устанавливались
+			if(skin == 0) { // куки ни разу не устанавливались
 				this.GloveModelCT = -1;
 				this.GloveSkinCT = -1;
 				this.GloveQuality = -1;
 			} else {
-				this.GloveModelCT = type[0];
-				this.GloveSkinCT = skin[0];
+				this.GloveModelCT = type;
+				this.GloveSkinCT = skin;
 		 	}
 			
 			if(gg.TeamDivided) {
 				GetClientCookie(this.Client, gg.ModelCookieT, buff, sizeof(buff));
-				type[1] = StringToInt(buff);
+				type = StringToInt(buff);
 				GetClientCookie(this.Client, gg.SkinCookieT, buff, sizeof(buff));
-				skin[1] = StringToInt(buff);
-				if(skin[1] == 0) { // куки ни разу не устанавливались
+				skin = StringToInt(buff);
+				if(skin == 0) { // куки ни разу не устанавливались
 					this.GloveModelT = -1;
 					this.GloveSkinT = -1;
 				} else {
-					this.GloveModelT = type[1];
-					this.GloveSkinT = skin[1];
+					this.GloveModelT = type;
+					this.GloveSkinT = skin;
 				}
 		 	}
 		 	return true;
 		}
 		return false;
-	}
-	public void ClearData(int client = -1, bool vip = true) {
-		this.SetInt("Client", client);
-		this.SetBool("Vip", vip);
-		this.SetInt("Glove", -1);
-		this.SetInt("ModelCT", -3);
-		this.SetInt("ModelT", -3);
-		this.SetInt("SkinCT", -3);
-		this.SetInt("SkinT", -3);
-		this.SetInt("Quality", 100);
 	}
 }
 stock void DumpDefaults(GloveStorage obj) {

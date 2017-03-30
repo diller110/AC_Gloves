@@ -1,16 +1,12 @@
-#undef REQUIRE_PLUGIN
-#include <vip_core>
-#define REQUIRE_PLUGIN
-#pragma newdecls required
 #include <gloves_oop.sp>
 
-#define MENU_TEXT 50
+#define MENU_TEXT 57
 #define MENUACTIONS MenuAction_Display|MenuAction_DisplayItem|MenuAction_DrawItem
 #define DCLIENT(%1) view_as<GloveHolder>(Dynamic.GetPlayerSettings(%1))
 
 public Plugin myinfo = {
 	name = "AC Gloves", author = "Aircraft(diller110)",
-	description = "Set in-game gloves",	version = "1.6 beta1", url = "thanks to Franc1sco && Pheonix"
+	description = "Set in-game gloves",	version = "1.6 beta4", url = "thanks to Franc1sco && Pheonix"
 };
 
 Menu ModelMenu, QualityMenu, DefaultMenu;
@@ -44,8 +40,10 @@ void StartLoading() {
 		CreateMenus();
 		
 		for (int i = 1; i < MAXPLAYERS; i++) {
-			if(IsClientConnected(i) && IsClientInGame(i) && !IsFakeClient(i) && AreClientCookiesCached(i))
+			if(IsClientConnected(i) && IsClientInGame(i) && !IsFakeClient(i) && AreClientCookiesCached(i)) {
+				DCLIENT(i).Initialize(i);
 				OnClientCookiesCached2(i);
+			}
 		}
 	} else {
 		LogError("[GLOVES] Failed to create GlovesGlobal's Dynamic object. (gg.IsValid == false)");
@@ -70,7 +68,7 @@ public void OnLibraryRemoved(const char[] name) {
 	if (ready && StrEqual(name, "vip_core")) gg.VipLoaded = false;
 }
 public void OnLibraryAdded(const char[] name) {
-	if (ready && StrEqual(name, "vip_core"))	gg.VipLoaded = true;
+	if (ready && StrEqual(name, "vip_core")) gg.VipLoaded = true;
 }
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
 	MarkNativeAsOptional("VIP_IsClientVIP");
@@ -78,23 +76,21 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	return APLRes_Success;
 }
 public void OnClientConnected(int client) {
-	GloveHolder gh = DCLIENT(client);
-	gh.ClearData(client);
+	DCLIENT(client).Initialize(client);
 }
-public Action Event_PlayerTeam(Event event,char[] name,  bool dontBroadcast) { 
+public Action Event_PlayerTeam(Event event, char[] name, bool dontBroadcast) { 
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	if(ready && (event.GetInt("oldteam") == 0) && IsClientConnected(client) && IsClientInGame(client) && !IsFakeClient(client) && AreClientCookiesCached(client)) {
 		OnClientCookiesCached2(client);
 	}
-	return Plugin_Changed;
+	return Plugin_Continue;
 }
 void OnClientCookiesCached2(int client) {
 	if (!ready || !gg.IsValid) return;
-	if (client < 1 && !IsClientConnected(client)) return;
+	if (client < 1 || !IsClientConnected(client)) return;
 	
 	GloveHolder gh = DCLIENT(client);
 	if(gh.IsValid) {
-		gh.ClearData(client, (gg.VipLoaded) ? VIP_IsClientVIP(client):true);
 		gh.LoadFromCookie();
 	 	if(IsPlayerAlive(client)) {
 			if(gh.SetGlove()) {
@@ -105,7 +101,6 @@ void OnClientCookiesCached2(int client) {
 }
 public void CreateMenus() {
 	char buff[3][MENU_TEXT];
-	
 	ModelMenu = CreateMenu(ModelMenuHandler, MENUACTIONS);
 	ModelMenu.SetTitle("Glove Menu:");
 	int count = gs.ModelsCount();
@@ -159,17 +154,18 @@ public int ModelMenuHandler(Menu menu, MenuAction action, int client, int item) 
 					case 'c': {	}
 				}
 			} else { // Выбраны перчатки
-				int model = StringToInt(buff);
-				int skins = gs.SkinsCount(model)+2;
 				Dynamic mdl = gs.GetDynamic(buff);
 				Menu SkinMenu = CreateMenu(SkinMenuHandler, MENUACTIONS);
 				
+				int model = StringToInt(buff);
 				gs.ModelName(model, buff2, sizeof(buff2));
 				SkinMenu.SetTitle(buff2);
 				if(gg.IsValid && gg.Random) {
 					Format(buff2, sizeof(buff2), "_r:%d", model);
 					SkinMenu.AddItem(buff2, "Menu Random");
 				}
+				
+				int skins = gs.SkinsCount(model)+2;
 				for (int i = 2; i < skins; i++) {
 					mdl.GetMemberNameByIndex(i, buff, sizeof(buff));
 					int ind = StringToInt(buff);
@@ -186,7 +182,7 @@ public int ModelMenuHandler(Menu menu, MenuAction action, int client, int item) 
 			}
 		}
 		case MenuAction_DisplayItem: {
-			static char buff[16], display[64];
+			static char buff[10], display[MENU_TEXT];
 			menu.GetItem(item, buff, sizeof(buff), _, display, sizeof(display));
 			if(buff[0] == '_') {
 				switch(buff[1]){
@@ -202,9 +198,11 @@ public int ModelMenuHandler(Menu menu, MenuAction action, int client, int item) 
 				}
 				return RedrawMenuItem(display);
 			} else {
-				GloveHolder gh = DCLIENT(client);
-				if(StringToInt(buff) == gh.GetGloveModel()) {
-					Format(display, sizeof(display), ">> %s <<", display);
+				if(StringToInt(buff) == DCLIENT(client).GetGloveModel()) {
+					if (display[strlen(display) - 2] == '\n') { // Убираем пробел в последнем пункте
+						display[strlen(display) - 2] = '\0';
+						Format(display, sizeof(display), ">> %s <<\n ", display);
+					} else Format(display, sizeof(display), ">> %s <<", display);
 					return RedrawMenuItem(display);
 				}
 			}
@@ -246,6 +244,7 @@ public int ModelMenuHandler(Menu menu, MenuAction action, int client, int item) 
 	}
 	return 0;
 }
+
 public int SkinMenuHandler(Menu menu, MenuAction action, int client, int item) {
 
 	switch(action) {
@@ -515,6 +514,20 @@ public void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast
 		} else {
 			if(gg.ThirdPerson) SetEntProp(client, Prop_Send, "m_nBody", 1);
 		}
+	}
+}
+public int VIP_OnVIPClientLoaded(int client) {
+	GloveHolder gh = DCLIENT(client);
+	if(ready && gh.IsValid) {
+		gh.Vip = true;
+		gh.SetGlove();
+	}
+}
+public int VIP_OnVIPClientRemoved(int client, const char[] reason) {
+	GloveHolder gh = DCLIENT(client);
+	if(ready && gh.IsValid) {
+		gh.Vip = false;
+		gh.SetGlove();
 	}
 }
 public Action FakeTimer(Handle timer, int client) {
