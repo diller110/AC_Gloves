@@ -180,7 +180,7 @@ methodmap GloveStorage < Dynamic {
 		}
 	}
 	public int ModelsCount() {
-		return (this.Defaults != INVALID_DYNAMIC_OBJECT) ? this.MemberCount - 1:this.MemberCount;
+		return (this.Defaults.IsValid)?this.MemberCount:this.MemberCount-1;
 	}
 	public bool AddModel(int model, char[] name, char[] icon) {
 		if(model>0) {
@@ -798,7 +798,6 @@ methodmap GloveHolder < Dynamic {
 			VIP_GetClientVIPGroup(this.Client, group, sizeof(group));
 		}
 		int model = this.GetGloveModel(), skin = this.GetGloveSkin(), quality = this.GloveQuality;
-		//PrintDebug("SetGlove Pre -> model: %d skin: %d quality: %d team: %d group: %s", model, skin, quality, GetClientTeam(this.Client), group);
 		if(model != -3) {
 			if(model == -1) {
 				model = gs.GetDefaultModel(group, GetClientTeam(this.Client));
@@ -810,7 +809,7 @@ methodmap GloveHolder < Dynamic {
 			if(model != -3 || skin != -3) {
 				int limit = (skin<1)?100:GloveAccess(this.Client, model, skin);
 				if(skin == -2) {
-					static int tries = 0;
+					int tries = 0;
 					do {
 						skin = gs.RandomSkin(model);
 						limit = GloveAccess(this.Client, model, skin);
@@ -821,20 +820,18 @@ methodmap GloveHolder < Dynamic {
 						SetGlove2(this);
 						return false;
 					}
-					tries = 0;
 				}
 				if(quality == -1) {
 					if(this.GloveQuality != -1)	quality = this.GloveQuality;
 					else quality = 100;
-					
-					if(limit == 0) {
-						PrintToChat(this.Client, "%s %t", Tag, "NoAccess", Clr, 1);
-						this.ResetGlove();
-						SetGlove2(this);
-						return false;
-					} else if(limit > 0 && quality > limit) {
-						quality = limit;
-					}
+				}	
+				if(limit == 0) {
+					PrintToChat(this.Client, "%s %t", Tag, "NoAccess", Clr, 1);
+					this.ResetGlove();
+					SetGlove2(this);
+					return false;
+				} else if(limit > 0 && quality > limit) {
+					quality = limit;
 				}
 			}
 		}

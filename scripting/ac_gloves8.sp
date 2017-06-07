@@ -2,11 +2,11 @@
 
 #define MENU_TEXT 57
 #define MENUACTIONS MenuAction_Display|MenuAction_DisplayItem|MenuAction_DrawItem
-#define DCLIENT(%1) view_as<GloveHolder>(Dynamic.GetPlayerSettings(%1))
+#define DCLIENT(%1) (view_as<GloveHolder>(Dynamic.GetPlayerSettings(%1)))
 
 public Plugin myinfo = {
 	name = "AC Gloves", author = "Aircraft(diller110)",
-	description = "Set in-game gloves",	version = "1.6 beta4", url = "thanks to Franc1sco && Pheonix"
+	description = "Set in-game gloves",	version = "1.6 beta5", url = "thanks to Franc1sco && Pheonix"
 };
 
 Menu ModelMenu, QualityMenu, DefaultMenu;
@@ -244,9 +244,7 @@ public int ModelMenuHandler(Menu menu, MenuAction action, int client, int item) 
 	}
 	return 0;
 }
-
 public int SkinMenuHandler(Menu menu, MenuAction action, int client, int item) {
-
 	switch(action) {
 		case MenuAction_Select: {
 			GloveHolder gh = DCLIENT(client);
@@ -320,7 +318,7 @@ public int SkinMenuHandler(Menu menu, MenuAction action, int client, int item) {
 					if (title[strlen(title) - 2] == '\n') { // Убираем пробел в последнем пункте
 						title[strlen(title) - 2] = '\0';
 						Format(title, sizeof(title), ">> %s <<\n ", title, limit);
-					} else Format(title, sizeof(title), ">>  %s <<", title, limit);
+					} else Format(title, sizeof(title), ">> %s <<", title, limit);
 					
 				}
 				return RedrawMenuItem(title);
@@ -343,7 +341,7 @@ public int SkinMenuHandler(Menu menu, MenuAction action, int client, int item) {
 		}
 		case MenuAction_Display: {
 			static char title[MENU_TEXT];
-			if(gg.IsValid && gg.TeamDivided) {
+			if(ready && gg.TeamDivided) {
 				int team = GetClientTeam(client);
 				menu.GetTitle(title, sizeof(title));
 				if (title[strlen(title) - 1] == ')')return 0;
@@ -480,7 +478,7 @@ public int DefaultMenuHandler(Menu menu, MenuAction action, int client, int item
 		case MenuAction_DrawItem: {
 			static char buff[3];
 			menu.GetItem(item, buff, sizeof(buff));
-			if(gg.IsValid) {
+			if(ready) {
 				if(gg.VipDefaults) {
 					if(gg.VipLoaded && !DCLIENT(client).Vip) {
 						if (buff[0] == 'v') return ITEMDRAW_DISABLED;
@@ -498,6 +496,7 @@ public int DefaultMenuHandler(Menu menu, MenuAction action, int client, int item
 	}
 	return 0;
 }
+
 public void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
 	if (!ready || !gg.IsValid) return;
 	int client = GetClientOfUserId(event.GetInt("userid"));
